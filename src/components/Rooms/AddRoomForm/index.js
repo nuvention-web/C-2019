@@ -4,6 +4,7 @@ import firebase from "firebase";
 import Button from '@material-ui/core/Button';
 import Input from '@material-ui/core/Input';
 import Typography from '@material-ui/core/Typography'
+import './AddRoomForm.css'
 
 
 class AddRoomForm extends Component {
@@ -19,7 +20,7 @@ class AddRoomForm extends Component {
 
     render() {
         return (
-            <div>
+            <div class='addroomform'>
                 <Typography variant="h5" gutterBottom>
                     Add Room
                 </Typography>

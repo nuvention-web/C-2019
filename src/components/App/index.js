@@ -24,7 +24,8 @@ class App extends Component {
     this.state = {
       isSignedIn: false,
       user: null,
-      rooms: {}
+      rooms: {},
+      action: 'track'
     }
   }
 
@@ -55,13 +56,28 @@ class App extends Component {
   }
 
   render() {    
-    if(this.state.isSignedIn){
+    if(this.state.isSignedIn && this.state.action == 'track'){
       return (
         <div class="app">
           <Helmet>
                 <style>{'body { background-color: lightblue; }'}</style>
           </Helmet>
+          <Button color='primary'>Track</Button>
+          <Button >Plan</Button>
           <Rooms uid={this.state.user.uid} rooms={this.state.rooms} /> <br/>
+          <Button variant="contained" color="primary" onClick={()=>firebase.auth().signOut()}>
+              Sign Out!
+          </Button>
+        </div>
+      );
+    } else if (this.state.isSignedIn && this.state.action == 'plan') {
+      return (
+        <div class="app">
+          <Helmet>
+                <style>{'body { background-color: lightblue; }'}</style>
+          </Helmet>
+          <Button color='primary'>Track</Button>
+          <Button color='primary'>Plan</Button>
           <Button variant="contained" color="primary" onClick={()=>firebase.auth().signOut()}>
               Sign Out!
           </Button>

@@ -53,9 +53,6 @@ class Rooms extends Component {
     render() {
         return (
             <div>
-                <Typography variant="h5" gutterBottom>
-                    You Rooms
-                </Typography>
                 <RoomList rooms={this.state.rooms}/>
                 <RoomNotes room={this.state.selectedRoom}/>
                 <AddRoomForm uid={this.props.uid} addRoom={this.addRoom.bind(this)}/>

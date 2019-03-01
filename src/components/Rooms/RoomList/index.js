@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
+import './RoomList.css';
 import Room from "../Room";
 
 class RoomList extends Component {
@@ -15,7 +15,7 @@ class RoomList extends Component {
         });
 
         return (
-            <div>
+            <div class='roomlist'>
                 {rooms}
             </div>
         );

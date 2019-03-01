@@ -1,3 +1,4 @@
 .room_card {
     width: 25%;
+    min-width: 200px;
 }

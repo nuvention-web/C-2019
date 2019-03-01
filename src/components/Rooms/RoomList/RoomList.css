@@ -1,0 +1,5 @@
+.roomlist {
+    display: flex;
+    overflow: scroll;
+    margin-bottom: 20px;
+}
