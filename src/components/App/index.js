@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
-import './App.css';
+import './App.scss';
 import PropTypes from 'prop-types';
 import firebase from "firebase";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
@@ -18,7 +18,7 @@ firebase.initializeApp({
 })
 
 class App extends Component {
-  constructor(props) 
+  constructor(props)
   {
     super(props)
     this.state = {
@@ -55,7 +55,7 @@ class App extends Component {
     }
   }
 
-  render() {    
+  render() {
     if(this.state.isSignedIn && this.state.action == 'track'){
       return (
         <div class="app">

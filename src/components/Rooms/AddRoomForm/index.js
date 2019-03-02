@@ -4,7 +4,7 @@ import firebase from "firebase";
 import Button from '@material-ui/core/Button';
 import Input from '@material-ui/core/Input';
 import Typography from '@material-ui/core/Typography'
-import './AddRoomForm.css'
+import './AddRoomForm.scss'
 
 
 class AddRoomForm extends Component {
