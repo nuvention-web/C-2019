@@ -52,7 +52,7 @@ class AddRoomForm extends Component {
                     }}
                     id="room_length"
                 /> <br/> <br/>
-                <Button variant="contained" color="primary" onClick={this.addRoom.bind(this)}>
+                <Button variant="contained" color="tertiary" onClick={this.addRoom.bind(this)}>
                     Add
                 </Button>
             </div>

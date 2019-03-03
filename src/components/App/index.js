@@ -60,12 +60,12 @@ class App extends Component {
       return (
         <div class="app">
           <Helmet>
-                <style>{'body { background-color: lightblue; }'}</style>
+                <style>{'body { background-color: lightgreen; }'}</style>
           </Helmet>
-          <Button color='primary'>Track</Button>
-          <Button >Plan</Button>
+          <Button color='tertiary'>Grow</Button>
+          <Button color='tertiary'>Growing</Button>
           <Rooms uid={this.state.user.uid} rooms={this.state.rooms} /> <br/>
-          <Button variant="contained" color="primary" onClick={()=>firebase.auth().signOut()}>
+          <Button variant="contained" color="tertiary" onClick={()=>firebase.auth().signOut()}>
               Sign Out!
           </Button>
         </div>
@@ -76,8 +76,8 @@ class App extends Component {
           <Helmet>
                 <style>{'body { background-color: lightblue; }'}</style>
           </Helmet>
-          <Button color='primary'>Track</Button>
-          <Button color='primary'>Plan</Button>
+          <Button color='tertiary'>Track</Button>
+          <Button color='tertiary'>Plan</Button>
           <Button variant="contained" color="primary" onClick={()=>firebase.auth().signOut()}>
               Sign Out!
           </Button>
@@ -85,8 +85,10 @@ class App extends Component {
       );
     } else {
       return (
-        <div>
+        <div class="login">
+          <div class="fire_login">
             <StyledFirebaseAuth uiConfig={this.uiConfig} firebaseAuth={firebase.auth()}/>
+          </div>
         </div>
       )
     }

@@ -9,20 +9,14 @@ import IconButton from '@material-ui/core/IconButton'
 import BugReportIcon from '@material-ui/icons/BugReport'
 import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import AddPhotoIcon from '@material-ui/icons/AddPhotoAlternate'
-
-
-const styles = {
-    card: {
-      width: 275,
-    }
-}
+import './Room.scss'
 
 class Room extends Component {
     render() {
         return (
             <div class='card'>
-                <Card className={styles.card}>
-                    <CardContent>
+                <Card className='card'>
+                    <CardContent className='CardContent'>
                         <Typography gutterBottom variant="h5" component="h2">
                             {this.props.name}
                         </Typography>
@@ -37,13 +31,13 @@ class Room extends Component {
                         </Typography>
                     </CardContent>
                     <CardActions>
-                        <IconButton aria-label="Add to favorites">
+                        <IconButton aria-label="Add General Note">
                             <NoteAddIcon />
                         </IconButton>
-                        <IconButton aria-label="Add to favorites">
+                        <IconButton aria-label="Add Bug/Pest Note">
                             <BugReportIcon />
                         </IconButton>
-                        <IconButton aria-label="Add to favorites">
+                        <IconButton aria-label="Add Picture Note">
                             <AddPhotoIcon />
                         </IconButton>
                     </CardActions>
