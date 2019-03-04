@@ -9,6 +9,7 @@ import IconButton from '@material-ui/core/IconButton'
 import BugReportIcon from '@material-ui/icons/BugReport'
 import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import AddPhotoIcon from '@material-ui/icons/AddPhotoAlternate'
+import DeleteIcon from '@material-ui/icons/Delete'
 import './Room.scss'
 
 class Room extends Component {
@@ -31,7 +32,7 @@ class Room extends Component {
                         </Typography>
                     </CardContent>
                     <CardActions>
-                        <IconButton aria-label="Add General Note">
+                        {/* <IconButton aria-label="Add General Note">
                             <NoteAddIcon />
                         </IconButton>
                         <IconButton aria-label="Add Bug/Pest Note">
@@ -39,6 +40,9 @@ class Room extends Component {
                         </IconButton>
                         <IconButton aria-label="Add Picture Note">
                             <AddPhotoIcon />
+                        </IconButton> */}
+                        <IconButton aria-label="Delete Room">
+                            <DeleteIcon />
                         </IconButton>
                     </CardActions>
                 </Card>

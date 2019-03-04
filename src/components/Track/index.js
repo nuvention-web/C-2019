@@ -7,7 +7,7 @@ import RoomNotes from "./RoomNotes";
 import Typography from '@material-ui/core/Typography'
 
 
-class Rooms extends Component {
+class Track extends Component {
     constructor(props) 
     {
       super(props)
@@ -61,4 +61,4 @@ class Rooms extends Component {
     }
 }
 
-export default Rooms;
+export default Track;

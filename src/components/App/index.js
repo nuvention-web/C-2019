@@ -6,8 +6,16 @@ import firebase from "firebase";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import Button from '@material-ui/core/Button';
 
-import Rooms from "../Rooms";
+import Track from "../Track";
+import Plan from "../Plan";
+
 import {Helmet} from 'react-helmet';
+import {
+  Route,
+  NavLink,
+  HashRouter
+} from "react-router-dom";
+
 
 
 firebase.initializeApp({
@@ -62,23 +70,23 @@ class App extends Component {
           <Helmet>
                 <style>{'body { background-color: lightgreen; }'}</style>
           </Helmet>
-          <Button color='tertiary'>Grow</Button>
-          <Button color='tertiary'>Growing</Button>
-          <Rooms uid={this.state.user.uid} rooms={this.state.rooms} /> <br/>
+          <HashRouter>
+            <div>
+              <NavLink to="/Plan"><Button color='tertiary'>Plan</Button></NavLink>
+              <NavLink to="/Track"><Button color='tertiary'>Track</Button></NavLink>
+              <div className="content">
+                <Route
+                  path='/Plan'
+                  render={(props) => <Plan {...props} />}
+                />               
+                <Route
+                  path='/Track'
+                  render={(props) => <Track {...props} uid={this.state.user.uid} rooms={this.state.rooms} />}
+                />
+              </div>
+            </div>
+          </HashRouter>
           <Button variant="contained" color="tertiary" onClick={()=>firebase.auth().signOut()}>
-              Sign Out!
-          </Button>
-        </div>
-      );
-    } else if (this.state.isSignedIn && this.state.action == 'plan') {
-      return (
-        <div class="app">
-          <Helmet>
-                <style>{'body { background-color: lightblue; }'}</style>
-          </Helmet>
-          <Button color='tertiary'>Track</Button>
-          <Button color='tertiary'>Plan</Button>
-          <Button variant="contained" color="primary" onClick={()=>firebase.auth().signOut()}>
               Sign Out!
           </Button>
         </div>
