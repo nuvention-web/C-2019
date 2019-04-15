@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 
 import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-material-cards';
+import { Button } from 'react-native-material-ui';
+import { FloatingAction } from 'react-native-floating-action';
 
 export default class HomeScreen extends Component {
   static navigationOptions = {
@@ -26,8 +28,7 @@ export default class HomeScreen extends Component {
 
     cards = [];
     for (var key in data) {
-      // check if the property/key is defined in the object itself, not in parent
-      if (data.hasOwnProperty(key)) {   
+      if (data.hasOwnProperty(key)) {
         image = data[key]['image'];
         cards.push(
           <Card>
@@ -46,12 +47,18 @@ export default class HomeScreen extends Component {
     }
 
     return (
-      <ScrollView>
-        {cards}
-      </ScrollView>
+      <View>
+        <ScrollView>
+          {cards}
+        </ScrollView>
+        <FloatingAction
+          onPressItem={
+            (name) => {
+              console.log(`selected button: ${name}`);
+            }
+          }
+        />
+      </View>
     );
   }
 }
-
-
-
