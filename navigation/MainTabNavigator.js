@@ -1,11 +1,37 @@
 import React from 'react';
-import { Platform } from 'react-native';
+import {
+  Platform,
+  StatusBar,
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  ScrollView,
+  TouchableOpacity  } from 'react-native';
+
+
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import TrackerScreen from '../screens/TrackerScreen';
+
+const PlantTrackerStack = createStackNavigator({
+  Track: TrackerScreen, 
+})
+
+PlantTrackerStack.navigationOptions = {
+  tabBarLabel: 'Track',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'}
+    />
+  ),
+};
+
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -57,4 +83,5 @@ export default createBottomTabNavigator({
   HomeStack,
   LinksStack,
   SettingsStack,
+  PlantTrackerStack,
 });
