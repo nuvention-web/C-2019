@@ -9,7 +9,9 @@ import {
   View
 } from 'react-native';
 
-import { Input, Button } from 'react-native-elements';
+import { Input, Button} from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 
 import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-material-cards';
@@ -19,7 +21,7 @@ import Form from 'react-native-form'
 
 export default class HomeScreen extends Component {
   static navigationOptions = {
-    title: 'Your Timelines',
+    title: 'Plant Tracker',
   };
 
   constructor(props) {
@@ -78,12 +80,15 @@ export default class HomeScreen extends Component {
 
       <Button
         onPress={() => this.setState({ isVisible: false})}
+        icon={
+          <Icon
+            name="check"
+            size={25}
+            color="white"
+          />
+        }
         title="Submit"
-        buttonStyle={styles.submitButton}>
-      </Button>
-
-
-
+      />
 
       </Modal>
       </View>
