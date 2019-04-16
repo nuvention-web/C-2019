@@ -4,12 +4,14 @@ import {
   StyleSheet,
   ListView,
   ScrollView,
+  TouchableOpacity,
   Text,
+  Image,
   Modal,
   View
 } from 'react-native';
 
-import { Input, Button} from 'react-native-elements';
+import { Input, Button, Overlay} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 
@@ -63,40 +65,17 @@ export default class HomeScreen extends Component {
       <ScrollView>
       {cards}
       </ScrollView>
-
-      <View style={styles.modal}>
-
-      <Modal animationType = {"fade"} transparent = {false}
-      visible = {this.state.isVisible}
-      onRequestClose = {() =>{ console.log("Modal has been closed.") } }>
-
-      <View style={styles.modalForm}>
-        <Text style={styles.headerText}>New Plant Form</Text>
-        <Input label='Strain' />
-        <Input label='Description' />
-        <Input label='Age' />
-      </View>
-
+      <Overlay isVisible={this.state.isVisible} height='50%' fullScreen={false}   onBackdropPress={() => this.setState({ isVisible: false })}>
+      <Input label='Strain' />
+      <Input label='Description' />
+      <Input label='Age' />
+      </Overlay>
 
       <Button
-        onPress={() => this.setState({ isVisible: false})}
-        icon={
-          <Icon
-            name="check"
-            size={25}
-            color="white"
-          />
-        }
-        title="Submit"
-      />
-
-      </Modal>
-      </View>
-
-      <FloatingAction
-      showBackground = {true}
-      overlayColor = 'rgba(0, 0, 0, 0)'
-      onPressMain = {() => {this.setState({ isVisible: true})}}
+      buttonStyle={{ position: 'absolute', bottom: 10, right: 10, zIndex: 10, borderRadius: '50%', paddingLeft: 10, paddingRight: 10, paddingTop: 8, paddingBottom: 8}}
+      icon={<Icon name="plus" size={30} color="white"/>}
+      onPress={() => this.setState({ isVisible: true })}
+      type="solid"
       />
       </View>
 
@@ -162,5 +141,22 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignSelf: 'stretch',
     justifyContent: 'center'
+  },
+  TouchableOpacityStyle:{
+
+    position: 'absolute',
+    width: 50,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    right: 30,
+    bottom: 30,
+  },
+
+  FloatingButtonStyle: {
+
+    resizeMode: 'contain',
+    width: 50,
+    height: 50,
   }
 });
