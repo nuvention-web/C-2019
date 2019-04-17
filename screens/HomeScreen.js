@@ -28,14 +28,8 @@ export default class HomeScreen extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      isVisible: false, //state of modal default false
-
-    };
-  }
 
 
-  render() {
     data = {'Plant 1' : {'image' : '../src/static/plant1.jpg', 'strain': 'sativa', 'age' : 22},
     'Plant 2' : {'image' : '../src/static/plant2.jpg', 'strain': 'sativa', 'age' : 52},
     'Plant 3' : {'image' : '../src/static/plant3.jpg', 'strain': 'sativa', 'age' : 77}};
@@ -60,15 +54,57 @@ export default class HomeScreen extends Component {
       }
     }
 
+
+    this.state = {
+      isVisible: false, //state of modal default false
+      strain: '',
+      description: '',
+      age: '',
+      cards
+    };
+  }
+
+  submitNewPlant = ()=> {
+    this.setState((prevState)=>{
+      let oldCards = prevState.cards;
+      oldCards.push(
+          <Card>
+          <CardImage
+          source={require('../src/static/plant1.jpg')}
+          title={"Day " + prevState.age}
+          />
+          <CardTitle
+          title={this.state.description}
+          subtitle={this.state.strain}
+          />
+          {/* <CardContent text="Your device will reboot in few seconds once successful, be patient meanwhile" /> */}
+          </Card>
+      );
+      return {
+        cards: oldCards,
+        isVisible: false
+      }
+    })
+
+  }
+
+  render() {
+
+
     return (
       <View>
       <ScrollView>
       {cards}
       </ScrollView>
       <Overlay isVisible={this.state.isVisible} height='50%' fullScreen={false}   onBackdropPress={() => this.setState({ isVisible: false })}>
-      <Input label='Strain' />
-      <Input label='Description' />
-      <Input label='Age' />
+      <Input label='Strain' onChangeText={strain=>this.setState({strain})} />
+      <Input label='Description'  onChangeText={description=>this.setState({description})} />
+      <Input label='Age'  onChangeText={age=>this.setState({age})} />
+      <Button
+      title="OK"
+      onPress={this.submitNewPlant}
+      type="solid"
+      />
       </Overlay>
 
       <Button
@@ -77,6 +113,7 @@ export default class HomeScreen extends Component {
       onPress={() => this.setState({ isVisible: true })}
       type="solid"
       />
+
       </View>
 
     );
