@@ -13,12 +13,13 @@ import {
 
 import { Input, Button, Overlay} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {Link} from 'react-router-native';
 
-
+import ConsultingScreen from './ConsultingScreen';
 
 import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-material-cards';
 import { FloatingAction } from 'react-native-floating-action';
-import Form from 'react-native-form'
+import Form from 'react-native-form';
 
 
 export default class HomeScreen extends Component {
@@ -29,7 +30,6 @@ export default class HomeScreen extends Component {
   constructor(props) {
     super(props);
 
-
     data = {'Plant 1' : {'image' : '../src/static/plant1.jpg', 'strain': 'sativa', 'age' : 22},
     'Plant 2' : {'image' : '../src/static/plant2.jpg', 'strain': 'sativa', 'age' : 52},
     'Plant 3' : {'image' : '../src/static/plant3.jpg', 'strain': 'sativa', 'age' : 77}};
@@ -39,17 +39,20 @@ export default class HomeScreen extends Component {
       if (data.hasOwnProperty(key)) {
         image = data[key]['image'];
         cards.push(
-          <Card>
-          <CardImage
-          source={require('../src/static/plant1.jpg')}
-          title={"Day " + data[key]['age']}
-          />
-          <CardTitle
-          title={key}
-          subtitle={data[key]['strain']}
-          />
-          {/* <CardContent text="Your device will reboot in few seconds once successful, be patient meanwhile" /> */}
-          </Card>
+          <TouchableOpacity
+                onPress={()=>this.props.navigation.navigate('Consulting')}>
+                <Card>
+                  <CardImage
+                  source={require('../src/static/plant1.jpg')}
+                  title={"Day " + data[key]['age']}
+                  />
+                  <CardTitle
+                  title={key}
+                  subtitle={data[key]['strain']}
+                  />
+                </Card>
+            </TouchableOpacity>
+
         )
       }
     }
@@ -68,17 +71,17 @@ export default class HomeScreen extends Component {
     this.setState((prevState)=>{
       let oldCards = prevState.cards;
       oldCards.push(
-          <Card>
-          <CardImage
-          source={require('../src/static/plant1.jpg')}
-          title={"Day " + prevState.age}
-          />
-          <CardTitle
-          title={this.state.description}
-          subtitle={this.state.strain}
-          />
-          {/* <CardContent text="Your device will reboot in few seconds once successful, be patient meanwhile" /> */}
-          </Card>
+        <Card>
+        <CardImage
+        source={require('../src/static/plant1.jpg')}
+        title={"Day " + prevState.age}
+        />
+        <CardTitle
+        title={this.state.description}
+        subtitle={this.state.strain}
+        />
+        {/* <CardContent text="Your device will reboot in few seconds once successful, be patient meanwhile" /> */}
+        </Card>
       );
       return {
         cards: oldCards,

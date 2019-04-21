@@ -7,6 +7,11 @@ export default class ConsultingScreen extends React.Component {
     messages: []
   };
 
+  static navigationOptions = {
+    title: 'Consulting',
+  };
+
+
   componentWillMount() {
     this.setState({
       messages: [
