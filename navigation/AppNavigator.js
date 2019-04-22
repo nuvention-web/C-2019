@@ -5,6 +5,8 @@ import MainTabNavigator from './MainTabNavigator';
 import { Login } from '../screens';
 import HomeScreen from '../screens/HomeScreen';
 import ConsultingScreen from '../screens/ConsultingScreen';
+import TimelineScreen from '../screens/TimelineScreen';
+
 
 
 export default createAppContainer(createSwitchNavigator({
@@ -14,6 +16,7 @@ export default createAppContainer(createSwitchNavigator({
   Login: Login,
   Home: HomeScreen,
   Consulting: ConsultingScreen,
+  Timeline: TimelineScreen,
 },
 {
   initialRouteName: 'Login',

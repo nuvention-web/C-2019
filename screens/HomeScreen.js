@@ -13,9 +13,6 @@ import {
 
 import { Input, Button, Overlay} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {Link} from 'react-router-native';
-
-import ConsultingScreen from './ConsultingScreen';
 
 import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-material-cards';
 import { FloatingAction } from 'react-native-floating-action';
@@ -24,7 +21,7 @@ import Form from 'react-native-form';
 
 export default class HomeScreen extends Component {
   static navigationOptions = {
-    title: 'Plant Tracker',
+    title: 'Home',
   };
 
   constructor(props) {
@@ -40,7 +37,7 @@ export default class HomeScreen extends Component {
         image = data[key]['image'];
         cards.push(
           <TouchableOpacity
-                onPress={()=>this.props.navigation.navigate('Consulting')}>
+                onPress={()=>this.props.navigation.navigate('Timeline')}>
                 <Card>
                   <CardImage
                   source={require('../src/static/plant1.jpg')}
