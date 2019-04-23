@@ -97,14 +97,14 @@ export default class HomeScreen extends Component {
       {cards}
       </ScrollView>
       <Overlay isVisible={this.state.isVisible} height='50%' fullScreen={false}   onBackdropPress={() => this.setState({ isVisible: false })}>
-      <Input label='Strain' onChangeText={strain=>this.setState({strain})} />
-      <Input label='Description'  onChangeText={description=>this.setState({description})} />
-      <Input label='Age'  onChangeText={age=>this.setState({age})} />
-      <Button
-      title="OK"
-      onPress={this.submitNewPlant}
-      type="solid"
-      />
+        <Input label='Strain' onChangeText={strain=>this.setState({strain})} />
+        <Input label='Description'  onChangeText={description=>this.setState({description})} />
+        <Input label='Age'  onChangeText={age=>this.setState({age})} />
+        <Button
+        title="OK"
+        onPress={this.submitNewPlant}
+        type="solid"
+        />
       </Overlay>
 
       <Button

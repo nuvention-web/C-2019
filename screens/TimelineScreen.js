@@ -32,7 +32,21 @@ export default class TimelineScreen extends Component {
       {time: '02/02/19', title: 'First leaf', description: 'Adjusted lamps'},
       {time: '03/17/19', title: 'Wilting leaves', description: 'Too much water'},
     ]
+    this.state = {
+      isVisible: false, //state of modal default false
+      time: '',
+      title: '',
+      description: '',
+    };
   }
+
+  submitNewEntry = ()=> {
+    this.data.push({time: this.state.time, title: this.state.title, description: this.state.description});
+    this.setState({ isVisible: false });
+
+  }
+
+
 
 
   render(){
@@ -44,10 +58,26 @@ export default class TimelineScreen extends Component {
       onPress={()=>this.props.navigation.navigate('Home')}
       type="solid"
       />
+      <Overlay isVisible={this.state.isVisible} height='50%' fullScreen={false}   onBackdropPress={() => this.setState({ isVisible: false })}>
+        <Input label='Time' onChangeText={time=>this.setState({time})} />
+        <Input label='Title'  onChangeText={title=>this.setState({title})} />
+        <Input label='Description'  onChangeText={description=>this.setState({description})} />
+        <Button
+        title="OK"
+        onPress={this.submitNewEntry}
+        type="solid"
+        />
+      </Overlay>
       <Timeline
         style={styles.list}
         data={this.data}>
       </Timeline>
+      <Button
+      buttonStyle={{ position: 'absolute', bottom: 10, right: 10, zIndex: 10, borderRadius: '50%', paddingLeft: 10, paddingRight: 10, paddingTop: 8, paddingBottom: 8}}
+      icon={<Icon name="plus" size={30} color="white"/>}
+      onPress={() => this.setState({ isVisible: true })}
+      type="solid"
+      />
 
       </View>
     )
