@@ -25,12 +25,12 @@ class LoginCompoenent extends Component {
                 <Item last>
                     <Input placeholder="Password" />
                 </Item>
-                <Button block onPress={() => this.props.navigation.navigate('Home')}>
+                <Button block onPress={() => this.props.navigation.navigate('Main')}>
                     <Text>Login</Text>
                 </Button>
             </Form>
-        
-       
+
+
     );
   }
 }
