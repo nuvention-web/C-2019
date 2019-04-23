@@ -52,12 +52,6 @@ export default class TimelineScreen extends Component {
   render(){
     return(
       <View style={styles.container}>
-      <Button
-      buttonStyle={{ position: 'absolute', top: -40, left: 8, zIndex: 10, borderRadius: '50%', paddingLeft: 10, paddingRight: 10, paddingTop: 8, paddingBottom: 8}}
-      icon={<Icon name="arrow-left" size={30} color="white"/>}
-      onPress={()=>this.props.navigation.navigate('Home')}
-      type="solid"
-      />
       <Overlay isVisible={this.state.isVisible} height='50%' fullScreen={false}   onBackdropPress={() => this.setState({ isVisible: false })}>
         <Input label='Time' onChangeText={time=>this.setState({time})} />
         <Input label='Title'  onChangeText={title=>this.setState({title})} />
@@ -88,7 +82,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-		paddingTop:65,
+		paddingTop:0,
 		backgroundColor:'white'
   },
   list: {

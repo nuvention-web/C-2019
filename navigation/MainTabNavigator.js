@@ -4,11 +4,13 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
-import ConsultingScreen from '../screens/ConsultingScreen';
+import TimelineScreen from '../screens/TimelineScreen';
 
+import ConsultingScreen from '../screens/ConsultingScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
+  Timeline: TimelineScreen,
 });
 
 HomeStack.navigationOptions = {
@@ -24,6 +26,7 @@ HomeStack.navigationOptions = {
     />
   ),
 };
+
 
 const ConsultingStack = createStackNavigator({
   Consulting: ConsultingScreen,
@@ -43,6 +46,10 @@ ConsultingStack.navigationOptions = {
     />
   ),
 };
+
+const TimelineStack = createStackNavigator({
+  Timeline: TimelineScreen,
+});
 
 export default createBottomTabNavigator({
   HomeStack,
