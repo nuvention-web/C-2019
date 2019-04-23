@@ -9,47 +9,59 @@ const CHATKIT_USER_NAME = '2948752';
 const CHATKIT_CONSULTANT = '1234567';
 
 export default class MyChat extends React.Component {
+
+  static navigationOptions = {
+    title: 'Consulting',
+  };
+
+
   state = {
     messages: [],
-
+    oldMessages: [],
+    init: 0,
+    loadEarlier: true,
+    isLoadingEarlier: false,
   };
 
 
   onLoadEarlier = () => {
+
+    this.setState((previousState) => {
+      return {
+        isLoadingEarlier: true,
+      };
+    });
+
+    setTimeout(() => {
       this.setState((previousState) => {
         return {
-          isLoadingEarlier: true,
+          messages: GiftedChat.prepend(previousState.messages,this.state.oldMessages),
+          loadEarlier: false,
+          isLoadingEarlier: false,
+          init: 1,
         };
       });
-
-      setTimeout(() => {
-          this.setState((previousState) => {
-            return {
-              messages: GiftedChat.prepend(previousState.messages, earlierMessages),
-              loadEarlier: false,
-              isLoadingEarlier: false,
-            };
-          });
-      }, 1000); // simulating network
-    };
+    }, 1000); // simulating network
+  };
 
 
   componentDidMount() {
 
-    this.setState({
-      messages: [
-        {
-          _id: CHATKIT_USER_NAME,
-          text: "Welcome to Growiy consulting, how can we help you?",
-          createdAt:  new Date(),
-          user: {
-            _id: CHATKIT_CONSULTANT,
-            name: "React Native",
-            avatar: require('../assets/images/growiy-logo-round.png')
-          }
-        }
-      ]
-    });
+    const defaultMessage = {
+      _id: CHATKIT_USER_NAME,
+      text: "Welcome to Growiy consulting, how can we help you?",
+      createdAt:  new Date(),
+      user: {
+        _id: CHATKIT_CONSULTANT,
+        name: "React Native",
+        avatar: require('../assets/images/growiy-logo-round.png')
+      }
+    };
+
+    this.setState(previousState => ({
+      messages: GiftedChat.append(previousState.messages,defaultMessage),
+    }));
+
     const tokenProvider = new TokenProvider({
       url: CHATKIT_TOKEN_PROVIDER_ENDPOINT,
     });
@@ -61,20 +73,19 @@ export default class MyChat extends React.Component {
     });
 
     chatManager
-      .connect()
-      .then(currentUser => {
-        this.currentUser = currentUser;
-        this.currentUser.subscribeToRoom({
-          roomId: CHATKIT_ROOM_ID,
-          hooks: {
-            onMessage: this.onReceive,
-          },
-          messageLimit: 0
-        });
-      })
-      .catch(err => {
-        console.log(err);
+    .connect()
+    .then(currentUser => {
+      this.currentUser = currentUser;
+      this.currentUser.subscribeToRoom({
+        roomId: CHATKIT_ROOM_ID,
+        hooks: {
+          onMessage: this.onReceive,
+        },
       });
+    })
+    .catch(err => {
+      console.log(err);
+    });
   }
 
   onReceive = data => {
@@ -90,24 +101,34 @@ export default class MyChat extends React.Component {
       },
     };
 
-
-    this.setState(previousState => ({
-      messages: GiftedChat.append(previousState.messages, incomingMessage),
-    }));
+    if (this.state.init == 0){
+      this.setState(previousState => ({
+        oldMessages: GiftedChat.prepend(previousState.oldMessages, incomingMessage),
+      }));
+    }
+    else{
+      this.setState(previousState => ({
+        messages: GiftedChat.append(previousState.messages, incomingMessage),
+      }));
+    }
 
   };
 
   onSend = (messages = []) => {
+    this.setState(previousState => ({
+      init: 1,
+    }));
+
     messages.forEach(message => {
       this.currentUser
-        .sendMessage({
-          text: message.text,
-          roomId: CHATKIT_ROOM_ID,
-        })
-        .then(() => {})
-        .catch(err => {
-          console.log(err);
-        });
+      .sendMessage({
+        text: message.text,
+        roomId: CHATKIT_ROOM_ID,
+      })
+      .then(() => {})
+      .catch(err => {
+        console.log(err);
+      });
     });
   };
 
@@ -115,13 +136,14 @@ export default class MyChat extends React.Component {
   render() {
     return (
       <GiftedChat
-        messages={this.state.messages}
-        onSend={messages => this.onSend(messages)}
-        loadEarlier={true}
-
-        user={{
-          _id: CHATKIT_USER_NAME,
-        }}
+      messages={this.state.messages}
+      onSend={messages => this.onSend(messages)}
+      loadEarlier={this.state.loadEarlier}
+      onLoadEarlier={this.onLoadEarlier}
+      isLoadingEarlier={this.state.isLoadingEarlier}
+      user={{
+        _id: CHATKIT_USER_NAME,
+      }}
       />
     );
   }
