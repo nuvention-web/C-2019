@@ -3,10 +3,34 @@ import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
 import AppNavigator from './navigation/AppNavigator';
 
+// Firebase App (the core Firebase SDK) is always required and must be listed first
+import * as firebase from "firebase/app";
+
+// Add the Firebase products that you want to use
+import "firebase/auth";
+import "firebase/database";
+
 export default class App extends React.Component {
   state = {
     isLoadingComplete: false,
   };
+
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount() {
+    let config = {
+        apiKey: "AIzaSyA_vGCSGgss8wZ9SHKsou2mlkvtAQlC5Iw",
+        authDomain: "growiy-37e6e.firebaseapp.com",
+        databaseURL: "https://growiy-37e6e.firebaseio.com",
+        projectId: "growiy-37e6e",
+        storageBucket: "growiy-37e6e.appspot.com",
+        messagingSenderId: "886254283116"
+    };
+    firebase.initializeApp(config);
+  }
+
 
   render() {
     if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
