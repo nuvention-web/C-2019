@@ -1,22 +1,16 @@
-import React, { Component,  TouchableHighlight  } from 'react';
+import React, { Component } from 'react';
 import {
-  AppRegistry,
   StyleSheet,
-  ListView,
-  ScrollView,
+  View,
   TouchableOpacity,
-  Text,
   Image,
-  Modal,
-  View
+  Text,
+  
 } from 'react-native';
 
+import { ImagePicker , Permissions} from 'expo';
 import { Input, Button, Overlay} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
-import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-material-cards';
-import { FloatingAction } from 'react-native-floating-action';
-import Form from 'react-native-form';
 import Timeline from 'react-native-timeline-listview'
 
 export default class TimelineScreen extends Component {
@@ -37,8 +31,10 @@ export default class TimelineScreen extends Component {
       time: '',
       title: '',
       description: '',
+      image: "nothing",
     };
   }
+
 
   submitNewEntry = ()=> {
     this.data.push({time: this.state.time, title: this.state.title, description: this.state.description});
@@ -46,9 +42,25 @@ export default class TimelineScreen extends Component {
 
   }
 
+  _pickImage = async () => {
+    const permissions = Permissions.CAMERA_ROLL;
+    const { status } = await Permissions.askAsync(permissions);
+    let result = null;
 
+    if(status === 'granted') {
+    result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+    });
+    console.log(result);
+  }
 
+    
 
+    if (!result.cancelled) {
+      this.setState({ image: result.uri });
+    }
+  };
   render(){
     return(
       <View style={styles.container}>
@@ -56,6 +68,13 @@ export default class TimelineScreen extends Component {
         <Input label='Time' onChangeText={time=>this.setState({time})} />
         <Input label='Title'  onChangeText={title=>this.setState({title})} />
         <Input label='Description'  onChangeText={description=>this.setState({description})} />
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Button
+          title="Pick an image from camera roll"
+          onPress={this._pickImage}
+        />
+
+      </View>
         <Button
         title="OK"
         onPress={this.submitNewEntry}
@@ -66,6 +85,7 @@ export default class TimelineScreen extends Component {
         style={styles.list}
         data={this.data}>
       </Timeline>
+      <Image source={{ uri: this.state.image }} style={{ width: 200, height: 200 }} />
       <Button
       buttonStyle={{ position: 'absolute', bottom: 10, right: 10, zIndex: 10, borderRadius: '50%', paddingLeft: 10, paddingRight: 10, paddingTop: 8, paddingBottom: 8}}
       icon={<Icon name="plus" size={30} color="white"/>}
