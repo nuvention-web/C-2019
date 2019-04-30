@@ -2,11 +2,7 @@ import React, { Component } from 'react';
 import { Text, TextInput } from 'react-native';
 import { Form, Item, Input, Label, Button } from 'native-base';
 import * as firebase from "firebase/app";
-
 import "firebase/auth";
-import "firebase/database";
-
-
 import styles from './styles';
 
 const {
