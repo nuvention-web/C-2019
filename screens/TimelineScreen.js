@@ -36,18 +36,15 @@ export default class TimelineScreen extends Component {
       isVisible: false, //state of modal default false
       time: '',
       title: '',
-      description: '',
+      description: ''
     };
+
   }
 
-  submitNewEntry = ()=> {
+  submitNewEntry = () => {
     this.data.push({time: this.state.time, title: this.state.title, description: this.state.description});
     this.setState({ isVisible: false });
-
   }
-
-
-
 
   render(){
     return(
