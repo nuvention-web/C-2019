@@ -6,6 +6,7 @@ import { Login } from '../screens';
 import HomeScreen from '../screens/HomeScreen';
 import ConsultingScreen from '../screens/ConsultingScreen';
 import TimelineScreen from '../screens/TimelineScreen';
+import SignupScreen from '../screens/Signup';
 
 
 
@@ -14,6 +15,7 @@ export default createAppContainer(createSwitchNavigator({
   // Read more at https://reactnavigation.org/docs/en/auth-flow.html
   Main: MainTabNavigator,
   Login: Login,
+  Signup: SignupScreen,
   Home: HomeScreen,
   Consulting: ConsultingScreen,
   Timeline: TimelineScreen,

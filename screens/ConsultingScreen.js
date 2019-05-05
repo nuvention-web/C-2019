@@ -2,13 +2,23 @@ import React from 'react';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { ChatManager, TokenProvider } from '@pusher/chatkit-client';
 
+import * as firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/database";
+import { db } from '../src/config';
+
 const CHATKIT_TOKEN_PROVIDER_ENDPOINT = 'https://us1.pusherplatform.io/services/chatkit_token_provider/v1/a97ef8a7-e054-49cf-abc5-cfd2f278baf3/token'; // 'PUSHER_TOKEN_ENDPOINT';
 const CHATKIT_INSTANCE_LOCATOR = 'v1:us1:a97ef8a7-e054-49cf-abc5-cfd2f278baf3'; //'PUSHER_INSTANCE_LOCATOR';
 const CHATKIT_ROOM_ID = '20687595';
-const CHATKIT_USER_NAME = '2948752';
 const CHATKIT_CONSULTANT = '1234567';
+let CHATKIT_USER_NAME = '2948752' ;
+
+
+
+
 
 export default class MyChat extends React.Component {
+
 
   static navigationOptions = {
     title: 'Consulting',
@@ -24,7 +34,10 @@ export default class MyChat extends React.Component {
   };
 
 
+
+
   onLoadEarlier = () => {
+
 
     this.setState((previousState) => {
       return {
@@ -46,6 +59,8 @@ export default class MyChat extends React.Component {
 
 
   componentDidMount() {
+
+    CHATKIT_USER_NAME = firebase.auth().currentUser.email;
 
     const defaultMessage = {
       _id: CHATKIT_USER_NAME,
@@ -134,6 +149,8 @@ export default class MyChat extends React.Component {
 
 
   render() {
+
+
     return (
       <GiftedChat
       messages={this.state.messages}
@@ -142,7 +159,7 @@ export default class MyChat extends React.Component {
       onLoadEarlier={this.onLoadEarlier}
       isLoadingEarlier={this.state.isLoadingEarlier}
       user={{
-        _id: CHATKIT_USER_NAME,
+        _id: CHATKIT_USER_NAME ,
       }}
       />
     );

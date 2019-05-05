@@ -27,19 +27,7 @@ class LoginCompoenent extends Component {
     firebase.auth().signInWithEmailAndPassword(email, password)
       .then(this.onLoginSuccess.bind(this))
       .catch(() => {
-        firebase.auth().createUserWithEmailAndPassword(email, password)
-          .then(this.onLoginSuccess.bind(this))
-          .catch((error) => {
-            alert(error);
-            let errorCode = error.code
-            let errorMessage = error.message;
-            if (errorCode == 'auth/weak-password') {
-              this.onLoginFailure.bind(this)('Weak password!')
-            } else {
-              this.onLoginFailure.bind(this)(errorMessage)
-            }
-            return;
-          });
+        alert("Invalid credentials")
       });
   }
 
@@ -52,11 +40,17 @@ class LoginCompoenent extends Component {
     }
 
     onLoginFailure(errorMessage) {
-      this.setState({ error: errorMessage, loading: false })
+      this.setState({ error: errorMessage, loading: false });
+    }
+
+    onSignupClick = () => {
+      this.props.navigation.navigate('Signup');
+
     }
 
 
   render() {
+
     return (
             <Form style = {containerStyle}>
                 <Text style = {{fontSize: 30, fontWeight: "bold", color: "green"}}>
@@ -79,8 +73,11 @@ class LoginCompoenent extends Component {
                       label="Password"
                       />
                 </Item>
-                <Button block onPress={this.submitLogin}>
+                <Button style = {{margin: 10}} block onPress={this.submitLogin}>
                     <Text>Login</Text>
+                </Button>
+                <Button style = {{margin: 10}} block onPress={this.onSignupClick}>
+                    <Text>Need an account? Signup</Text>
                 </Button>
             </Form>
 
