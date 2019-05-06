@@ -83,7 +83,7 @@ export default class HomeScreen extends Component {
     }
 
     return (
-      <View>
+      <View minHeight="100%">
         <ScrollView>{this.state.cards}</ScrollView>
         <Overlay
           isVisible={this.state.isVisible}
