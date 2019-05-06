@@ -40,9 +40,9 @@ export default class TimelineScreen extends Component {
 
 
   submitNewEntry = ()=> {
+
     this.data.push({time: this.state.time, title: this.state.title, description: this.state.description});
     this.setState({ isVisible: false });
-
   }
 
   _pickImage = async () => {

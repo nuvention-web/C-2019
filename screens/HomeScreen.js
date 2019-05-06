@@ -1,23 +1,15 @@
-import React, { Component,  TouchableHighlight  } from 'react';
+import React, { Component } from 'react';
 import {
-  AppRegistry,
   StyleSheet,
-  ListView,
   ScrollView,
   TouchableOpacity,
-  Text,
-  Image,
-  Modal,
   View
 } from 'react-native';
 
 import { Input, Button, Overlay} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
-import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-material-cards';
-import { FloatingAction } from 'react-native-floating-action';
-import Form from 'react-native-form';
-
+import { Card, CardTitle, CardImage } from 'react-native-material-cards';
+import { db } from '../src/config';
 
 export default class HomeScreen extends Component {
   static navigationOptions = {
@@ -26,6 +18,7 @@ export default class HomeScreen extends Component {
 
   constructor(props) {
     super(props);
+    this.ref = db.collection('Users');
 
     data = {'Plant 1' : {'image' : '../src/static/plant1.jpg', 'strain': 'sativa', 'age' : 22},
     'Plant 2' : {'image' : '../src/static/plant2.jpg', 'strain': 'sativa', 'age' : 52},
@@ -54,13 +47,13 @@ export default class HomeScreen extends Component {
       }
     }
 
-
     this.state = {
       isVisible: false, //state of modal default false
       strain: '',
       description: '',
       age: '',
-      cards
+      cards,
+      userID: '1'
     };
   }
 
@@ -86,6 +79,11 @@ export default class HomeScreen extends Component {
       }
     })
 
+    this.ref.add({
+      description: this.state.description,
+      strain: this.state.strain,
+      age: this.state.age
+    });
   }
 
   render() {
