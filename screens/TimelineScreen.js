@@ -12,6 +12,10 @@ import { ImagePicker , Permissions} from 'expo';
 import { Input, Button, Overlay} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Timeline from 'react-native-timeline-listview'
+import { db } from "../src/config";
+import * as firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/database";
 
 export default class TimelineScreen extends Component {
   static navigationOptions = {
@@ -20,29 +24,62 @@ export default class TimelineScreen extends Component {
 
   constructor(props) {
     super(props);
-    this.data = [
-      {time: '01/04/19', title: 'Seedling', description: 'Watering daily',  imageUrl: "https://cloud.githubusercontent.com/assets/21040043/24240422/20d84f6c-0fe4-11e7-8f1d-9dbc594d0cfa.jpg"},
-      {time: '01/15/19', title: 'Sprout', description: 'Watering weekly',  imageUrl: "https://cloud.githubusercontent.com/assets/21040043/24240422/20d84f6c-0fe4-11e7-8f1d-9dbc594d0cfa.jpg"},
-      {time: '02/02/19', title: 'First leaf', description: 'Adjusted lamps',  imageUrl: "https://cloud.githubusercontent.com/assets/21040043/24240422/20d84f6c-0fe4-11e7-8f1d-9dbc594d0cfa.jpg"},
-      {time: '03/17/19', title: 'Bad leaves', description: 'Too much water', imageUrl: "https://cloud.githubusercontent.com/assets/21040043/24240422/20d84f6c-0fe4-11e7-8f1d-9dbc594d0cfa.jpg"},
-    ]
+    const plantID = this.props.navigation.state.params['plantID'];
+    this.userEmail = firebase.auth().currentUser.email;
+    this.ref = db
+      .collection("Users")
+      .doc(this.userEmail)
+      .collection("Plants")
+      .doc(plantID)
+      .collection("Timeline");
+
     this.state = {
       isVisible: false, //state of modal default false
       time: '',
       title: '',
       description: '',
       image: "nothing",
+      data: [],
+      isLoading: true
     };
 
     this.renderDetail = this.renderDetail.bind(this)
-
   }
 
+  componentDidMount() {
+    this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
+  }
 
-  submitNewEntry = ()=> {
+  onCollectionUpdate = (querySnapshot) => {
+    const newData = [];
+    querySnapshot.forEach((doc) => {
+      const { date, title, description } = doc.data();
+      newData.push(
+        { time: date, title: title, description: description, imageUrl: "https://cloud.githubusercontent.com/assets/21040043/24240422/20d84f6c-0fe4-11e7-8f1d-9dbc594d0cfa.jpg" }
+      );
+    });
+    this.setState({
+      data: newData,
+      isLoading: false,
+   });
+  }
 
-    this.data.push({time: this.state.time, title: this.state.title, description: this.state.description});
-    this.setState({ isVisible: false });
+  submitNewEntry = () => {
+    this.setState({
+      isLoading: true,
+    });
+    this.ref.add({
+      time: this.state.time,
+      title: this.state.title,
+      description: this.state.description,
+      imageUrl: "https://cloud.githubusercontent.com/assets/21040043/24240422/20d84f6c-0fe4-11e7-8f1d-9dbc594d0cfa.jpg"
+    })
+    .then(
+      this.setState({
+        isLoading: false,
+        isVisible: false
+      })
+    )
   }
 
   _pickImage = async () => {
@@ -51,14 +88,12 @@ export default class TimelineScreen extends Component {
     let result = null;
 
     if(status === 'granted') {
-    result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-    });
-    console.log(result);
-  }
-
-    
+      result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        aspect: [4, 3],
+      });
+      console.log(result);
+    }
 
     if (!result.cancelled) {
       this.setState({ image: result.uri });
@@ -83,13 +118,15 @@ export default class TimelineScreen extends Component {
       </View>
     )
   }
+
   onEventPress(data){
     this.setState({selected: data})
   }
 
   renderSelected(){
-      if(this.state.selected)
-        return <Text style={{marginTop:10}}>Selected event: {this.state.selected.title} at {this.state.selected.time}</Text>
+    if(this.state.selected){
+      return <Text style={{marginTop:10}}>Selected event: {this.state.selected.title} at {this.state.selected.time}</Text>
+    }
   }
 
   render(){
@@ -117,10 +154,9 @@ export default class TimelineScreen extends Component {
       {this.renderSelected()}
       <Timeline
         style={styles.list}
-        data={this.data}
+        data={this.state.data}
         renderDetail={this.renderDetail}
         onEventPress={this.onEventPress}>
-        
       </Timeline>
 
       <Image source={{ uri: this.state.image }} style={{ width: 200, height: 200 }} />

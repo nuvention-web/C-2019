@@ -40,7 +40,7 @@ export default class HomeScreen extends Component {
     querySnapshot.forEach((doc) => {
       const { age, strain } = doc.data();
       cards.push(
-        <TouchableOpacity onPress={() => this.props.navigation.navigate("Timeline")}>
+        <TouchableOpacity onPress={() => this.props.navigation.navigate("Timeline", { plantID: doc.id })}>
           <Card>
             <CardImage
               source={require("../src/static/plant1.jpg")}
