@@ -21,5 +21,5 @@ export default createAppContainer(createSwitchNavigator({
   Timeline: TimelineScreen,
 },
 {
-  initialRouteName: 'Login',
+  initialRouteName: 'Signup',
 }));
