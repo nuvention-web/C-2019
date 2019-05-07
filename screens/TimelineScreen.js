@@ -131,7 +131,7 @@ export default class TimelineScreen extends Component {
 
   render(){
     return(
-      <View style={styles.container}>
+      <View style={styles.container} minHeight="100%">
       
       <Overlay isVisible={this.state.isVisible} height='50%' fullScreen={false}   onBackdropPress={() => this.setState({ isVisible: false })}>
         <Input label='Time' onChangeText={time=>this.setState({time})} />
