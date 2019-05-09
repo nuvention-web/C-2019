@@ -96,9 +96,15 @@ export default class TimelineScreen extends Component {
     }
 
     if (!result.cancelled) {
+      this.uploadImage(result.uri);
       this.setState({ image: result.uri });
     }
   };
+
+  uploadImage = async (uri) =>{
+    const response = await fetch(uri);
+    const blob = await response.blob();
+  }
 
   renderDetail(rowData) {
     let title = <Text style={[styles.title]}>{rowData.title}</Text>
@@ -158,8 +164,6 @@ export default class TimelineScreen extends Component {
         renderDetail={this.renderDetail}
         onEventPress={this.onEventPress}>
       </Timeline>
-
-      <Image source={{ uri: this.state.image }} style={{ width: 200, height: 200 }} />
      
       <Button
       buttonStyle={{ position: 'absolute', bottom: 10, right: 10, zIndex: 10, borderRadius: '50%', paddingLeft: 10, paddingRight: 10, paddingTop: 8, paddingBottom: 8}}
