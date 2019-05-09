@@ -153,6 +153,9 @@ export default class TimelineScreen extends Component {
 
       {this.renderSelected()}
       <Timeline
+        options={{
+          removeClippedSubviews: false
+        }}
         style={styles.list}
         data={this.state.data}
         renderDetail={this.renderDetail}
