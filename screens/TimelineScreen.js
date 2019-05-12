@@ -49,26 +49,43 @@ export default class TimelineScreen extends Component {
   }
 
   componentDidMount() {
+    console.log("Component mounting");
     this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
   }
 
   onCollectionUpdate = async (querySnapshot) => {
-    const newData = [];
-    querySnapshot.forEach((doc) => {
-      const { date, title, description } = doc.data();
-      console.log("Comes here");
-      var ref = firebase.storage().ref().child("images/" + title + ".jpg");
-      ref.getDownloadURL().then(function(url){
-        newData.push(
-          { time: date, title: title, description: description, imageUrl: url}
-        );
-      });
-      
-    });
     this.setState({
-      data: newData,
-      isLoading: false,
-   });
+      isLoading: true,
+    });
+    var newData = [];
+    var test = ['a'];
+    await querySnapshot.forEach((doc) => {
+      console.log("awaiting");
+      const { date, title, description } = doc.data();
+        var ref = firebase.storage().ref().child("images/" + title + ".jpg");
+        ref.getDownloadURL()
+        .then(function(url){
+          console.log(url);
+          newData.push(
+            { time: date, title: title, description: description, imageUrl: url}
+          );
+      })
+      .then( () => {
+        console.log("setstate");
+        this.setState({
+          data: newData,
+          isLoading: false,
+      })
+      }
+        
+      )      
+    })
+    //   this.setState({
+    //     data: newData,
+    //     isLoading: false,
+    // })
+        
+    
   }
 
   submitNewEntry = async () => {
@@ -76,18 +93,21 @@ export default class TimelineScreen extends Component {
       isLoading: true,
     });
     this.uploadImage(this.state.image)
-
-    this.ref.add({
-      time: this.state.time,
-      title: this.state.title,
-      description: this.state.description,
-    })
-
-    .then(
+    .then(() => {
+      console.log('upload image completed');
+      this.ref.add({
+        time: this.state.time,
+        title: this.state.title,
+        description: this.state.description,
+      })
+    })    
+    .then(() => {
       this.setState({
         isLoading: false,
         isVisible: false
       })
+    }
+      
     )
   }
 
@@ -123,18 +143,9 @@ export default class TimelineScreen extends Component {
       xhr.send(null);
     });
   
-
-
     var ref = firebase.storage().ref().child("images/" + this.state.title + ".jpg");
 
     return ref.put(blob)
-    // .then(() => {
-    //   this.setState({ downloadURL: ref.getDownloadURL()})
-    //   console.log(this.state.downloadURL);
-    // });
-    
-
-    // this.setState({image: blob});
   }
 
   renderDetail(rowData) {
@@ -195,8 +206,8 @@ export default class TimelineScreen extends Component {
         }}
         style={styles.list}
         data={this.state.data}
-        renderDetail={this.renderDetail}
-        onEventPress={this.onEventPress}>
+        renderDetail={this.renderDetail}>
+        {/* // onEventPress={this.onEventPress}> */}
       </Timeline>
      
       <Button
