@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, forwardRef } from 'react';
 import {
   StyleSheet,
   View,
@@ -16,6 +16,7 @@ import { db } from "../src/config";
 import * as firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
+// import { resolve } from 'path';
 
 export default class TimelineScreen extends Component {
   static navigationOptions = {
@@ -40,45 +41,73 @@ export default class TimelineScreen extends Component {
       description: '',
       image: "nothing",
       data: [],
-      isLoading: true
+      isLoading: true,
+      downloadURL: '',
     };
 
     this.renderDetail = this.renderDetail.bind(this)
   }
 
   componentDidMount() {
+    console.log("Component mounting");
     this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
   }
 
-  onCollectionUpdate = (querySnapshot) => {
-    const newData = [];
-    querySnapshot.forEach((doc) => {
-      const { date, title, description } = doc.data();
-      newData.push(
-        { time: date, title: title, description: description, imageUrl: "https://cloud.githubusercontent.com/assets/21040043/24240422/20d84f6c-0fe4-11e7-8f1d-9dbc594d0cfa.jpg" }
-      );
-    });
-    this.setState({
-      data: newData,
-      isLoading: false,
-   });
-  }
-
-  submitNewEntry = () => {
+  onCollectionUpdate = async (querySnapshot) => {
     this.setState({
       isLoading: true,
     });
-    this.ref.add({
-      time: this.state.time,
-      title: this.state.title,
-      description: this.state.description,
-      imageUrl: "https://cloud.githubusercontent.com/assets/21040043/24240422/20d84f6c-0fe4-11e7-8f1d-9dbc594d0cfa.jpg"
+    var newData = [];
+    var test = ['a'];
+    await querySnapshot.forEach((doc) => {
+      console.log("awaiting");
+      const { date, title, description } = doc.data();
+        var ref = firebase.storage().ref().child("images/" + title + ".jpg");
+        ref.getDownloadURL()
+        .then(function(url){
+          console.log(url);
+          newData.push(
+            { time: date, title: title, description: description, imageUrl: url}
+          );
+      })
+      .then( () => {
+        console.log("setstate");
+        this.setState({
+          data: newData,
+          isLoading: false,
+      })
+      }
+        
+      )      
     })
-    .then(
+    //   this.setState({
+    //     data: newData,
+    //     isLoading: false,
+    // })
+        
+    
+  }
+
+  submitNewEntry = async () => {
+    this.setState({
+      isLoading: true,
+    });
+    this.uploadImage(this.state.image)
+    .then(() => {
+      console.log('upload image completed');
+      this.ref.add({
+        time: this.state.time,
+        title: this.state.title,
+        description: this.state.description,
+      })
+    })    
+    .then(() => {
       this.setState({
         isLoading: false,
         isVisible: false
       })
+    }
+      
     )
   }
 
@@ -92,13 +121,32 @@ export default class TimelineScreen extends Component {
         allowsEditing: true,
         aspect: [4, 3],
       });
-      console.log(result);
     }
 
     if (!result.cancelled) {
-      this.setState({ image: result.uri });
-    }
+      this.setState({ image: result.uri});
+      }
   };
+
+  uploadImage = async (uri) =>{
+    const response = await fetch(uri);
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function() {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function(e) {
+        reject(new TypeError('Network request failed'));
+      };
+      xhr.responseType = 'blob';
+      xhr.open('GET', uri, true);
+      xhr.send(null);
+    });
+  
+    var ref = firebase.storage().ref().child("images/" + this.state.title + ".jpg");
+
+    return ref.put(blob)
+  }
 
   renderDetail(rowData) {
     let title = <Text style={[styles.title]}>{rowData.title}</Text>
@@ -158,11 +206,9 @@ export default class TimelineScreen extends Component {
         }}
         style={styles.list}
         data={this.state.data}
-        renderDetail={this.renderDetail}
-        onEventPress={this.onEventPress}>
+        renderDetail={this.renderDetail}>
+        {/* // onEventPress={this.onEventPress}> */}
       </Timeline>
-
-      <Image source={{ uri: this.state.image }} style={{ width: 200, height: 200 }} />
      
       <Button
       buttonStyle={{ position: 'absolute', bottom: 10, right: 10, zIndex: 10, borderRadius: '50%', paddingLeft: 10, paddingRight: 10, paddingTop: 8, paddingBottom: 8}}
