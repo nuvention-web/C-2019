@@ -7,6 +7,7 @@ import HomeScreen from '../screens/HomeScreen';
 import TimelineScreen from '../screens/TimelineScreen';
 
 import ConsultingScreen from '../screens/ConsultingScreen';
+import ChatRoomListScreen from '../screens/ChatRoomListScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -29,7 +30,8 @@ HomeStack.navigationOptions = {
 
 
 const ConsultingStack = createStackNavigator({
-  Consulting: ConsultingScreen,
+  //Consulting: ConsultingScreen,
+  ChatRoomList: ChatRoomListScreen,
 });
 
 
@@ -47,9 +49,7 @@ ConsultingStack.navigationOptions = {
   ),
 };
 
-const TimelineStack = createStackNavigator({
-  Timeline: TimelineScreen,
-});
+
 
 export default createBottomTabNavigator({
   HomeStack,

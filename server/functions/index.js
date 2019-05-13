@@ -11,17 +11,22 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const Chatkit = require("@pusher/chatkit-server");
-const app = express()
-const CONSULTANT_ID = 'growiydotcom@gmail.com'
+const app = express();
+const app2 = express();
+const CONSULTANT_ID = 'growiydotcom@gmail.com';
 
 const chatkit = new Chatkit.default({
   instanceLocator: "v1:us1:a97ef8a7-e054-49cf-abc5-cfd2f278baf3",
   key: "d5396442-f0f3-4aaa-915b-0c4a6d9eaf23:xh/CLJ5dRPXbLWOJG26ALFKSOR02pUlVHwgBWC+wltU="
 });
 
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
-app.use(cors())
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(cors());
+
+app2.use(bodyParser.urlencoded({ extended: false }));
+app2.use(bodyParser.json());
+app2.use(cors());
 
 app.post("/", (req, res) => {
   const { id, name } = req.body;
@@ -58,7 +63,7 @@ app.post("/", (req, res) => {
       console.log(`User already exists: ${name}`);
       res.sendStatus(200);
     } else {
-      console.log('failed created user');
+      console.log('failed created user ' + err.error);
       res.status(err.status).json(err);
     }
   });
@@ -84,10 +89,21 @@ app.post("/", (req, res) => {
 
 });
 
+app2.post("/", (req, res) => {
 
-// app.post("/authenticate", (req, res) => {
-//   const authData = chatkit.authenticate({ userId: req.query.user_id });
-//   res.status(authData.status).send(authData.body);
-// });
+  const { id } = req.body;
+  chatkit.getUserRooms({
+  userId: id,
+})
+  .then((room_res) => {
+    console.log(room_res);
+    res.send(200,room_res);
+  }).catch((err) => {
+    console.log(err);
+  });
+
+});
+
 
 exports.addUser = functions.https.onRequest(app);
+exports.getRooms = functions.https.onRequest(app2);

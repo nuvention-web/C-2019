@@ -14,9 +14,6 @@ const CHATKIT_CONSULTANT = '1234567';
 let CHATKIT_USER_NAME = '2948752' ;
 
 
-
-
-
 export default class MyChat extends React.Component {
 
 
