@@ -16,7 +16,8 @@ import { db } from "../src/config";
 import * as firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
-// import { resolve } from 'path';
+import DatePicker from 'react-native-datepicker';
+import md5 from 'md5';
 
 export default class TimelineScreen extends Component {
   static navigationOptions = {
@@ -33,23 +34,30 @@ export default class TimelineScreen extends Component {
       .collection("Plants")
       .doc(plantID)
       .collection("Timeline");
+    
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+    today = mm + '/' + dd + '/' + yyyy;
 
     this.state = {
       isVisible: false, //state of modal default false
-      time: '',
+      date: today,
       title: '',
       description: '',
       image: "nothing",
       data: [],
       isLoading: true,
       downloadURL: '',
+      userEmail: this.userEmail,
+      plantID: plantID
     };
 
     this.renderDetail = this.renderDetail.bind(this)
   }
 
   componentDidMount() {
-    console.log("Component mounting");
     this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
   }
 
@@ -60,55 +68,61 @@ export default class TimelineScreen extends Component {
     var newData = [];
     var test = ['a'];
     await querySnapshot.forEach((doc) => {
-      console.log("awaiting");
       const { date, title, description } = doc.data();
-        var ref = firebase.storage().ref().child("images/" + title + ".jpg");
-        ref.getDownloadURL()
-        .then(function(url){
-          console.log(url);
-          newData.push(
-            { time: date, title: title, description: description, imageUrl: url}
-          );
+      var imageName = md5(this.state.userEmail + date + title + description + this.state.plantID);
+      var ref = firebase.storage().ref().child("images/" + imageName + ".jpg");
+      ref.getDownloadURL()
+      .then(function(url){
+        newData.push(
+          { time: date, title: title, description: description, imageUrl: url}
+        );
       })
-      .then( () => {
-        console.log("setstate");
+      .catch( function(error){
+        newData.push(
+          { time: date, title: title, description: description, imageUrl: ""}
+        );
+      })
+      .finally( () => {
         this.setState({
           data: newData,
           isLoading: false,
+        })
       })
-      }
-        
-      )      
     })
-    //   this.setState({
-    //     data: newData,
-    //     isLoading: false,
-    // })
-        
-    
   }
 
   submitNewEntry = async () => {
     this.setState({
       isLoading: true,
     });
-    this.uploadImage(this.state.image)
-    .then(() => {
-      console.log('upload image completed');
+    if(this.state.image != "nothing"){
+      this.uploadImage(this.state.image)
+      .then(() => {
+        this.ref.add({
+          date: this.state.date,
+          title: this.state.title,
+          description: this.state.description,
+        })
+      })    
+      .then(() => {
+        this.setState({
+          isLoading: false,
+          isVisible: false
+        })
+      })
+    } else {
       this.ref.add({
-        time: this.state.time,
+        date: this.state.date,
         title: this.state.title,
         description: this.state.description,
       })
-    })    
-    .then(() => {
-      this.setState({
-        isLoading: false,
-        isVisible: false
+      .then(() => {
+        this.setState({
+          isLoading: false,
+          isVisible: false
+        })
       })
     }
-      
-    )
   }
 
   _pickImage = async () => {
@@ -125,7 +139,7 @@ export default class TimelineScreen extends Component {
 
     if (!result.cancelled) {
       this.setState({ image: result.uri});
-      }
+    }
   };
 
   uploadImage = async (uri) =>{
@@ -143,7 +157,8 @@ export default class TimelineScreen extends Component {
       xhr.send(null);
     });
   
-    var ref = firebase.storage().ref().child("images/" + this.state.title + ".jpg");
+    var imageName = md5(this.state.userEmail + this.state.date + this.state.title + this.state.description + this.state.plantID);
+    var ref = firebase.storage().ref().child("images/" + imageName + ".jpg");
 
     return ref.put(blob)
   }
@@ -173,50 +188,72 @@ export default class TimelineScreen extends Component {
 
   renderSelected(){
     if(this.state.selected){
-      return <Text style={{marginTop:10}}>Selected event: {this.state.selected.title} at {this.state.selected.time}</Text>
+      return <Text style={{marginTop:10}}>Selected event: {this.state.selected.title} at {this.state.selected.date}</Text>
     }
   }
 
   render(){
     return(
       <View style={styles.container} minHeight="100%">
-      
-      <Overlay isVisible={this.state.isVisible} height='50%' fullScreen={false}   onBackdropPress={() => this.setState({ isVisible: false })}>
-        <Input label='Time' onChangeText={time=>this.setState({time})} />
-        <Input label='Title'  onChangeText={title=>this.setState({title})} />
-        <Input label='Description'  onChangeText={description=>this.setState({description})} />
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Button
-          title="Pick an image from camera roll"
-          onPress={this._pickImage}
-        />
+        <Overlay isVisible={this.state.isVisible} height='50%' fullScreen={false}   onBackdropPress={() => this.setState({ isVisible: false })}>
+          <DatePicker
+            style={{width: 200}}
+            date={this.state.date}
+            mode="date"
+            placeholder="select date"
+            format="DD/MM/YYYY"
+            minDate="01-01-2016"
+            maxDate="01-01-2021"
+            confirmBtnText="Confirm"
+            cancelBtnText="Cancel"
+            customStyles={{
+              dateIcon: {
+                position: 'absolute',
+                left: 8,
+                top: 4,
+                marginLeft: 0,
+                marginTop: 5
+              },
+              dateInput: {
+                marginTop: 5,
+                marginLeft: 44,
+                borderRadius: 2
+              }
+            }}
+            onDateChange={(date) => {this.setState({date: date})}}
+          />
+          <Input label='Title'  onChangeText={title=>this.setState({title})} />
+          <Input label='Description'  onChangeText={description=>this.setState({description})} />
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <Button
+              title="Pick an image from camera roll"
+              onPress={this._pickImage}
+            />
+          </View>
+          <Button
+            title="OK"
+            onPress={this.submitNewEntry}
+            type="solid"
+          />
+        </Overlay>
 
-      </View>
+        {this.renderSelected()}
+        <Timeline
+          options={{
+            removeClippedSubviews: false
+          }}
+          style={styles.list}
+          data={this.state.data}
+          renderDetail={this.renderDetail}>
+          {/* // onEventPress={this.onEventPress}> */}
+        </Timeline>
+      
         <Button
-        title="OK"
-        onPress={this.submitNewEntry}
+        buttonStyle={{ position: 'absolute', bottom: 10, right: 10, zIndex: 10, borderRadius: '50%', paddingLeft: 10, paddingRight: 10, paddingTop: 8, paddingBottom: 8}}
+        icon={<Icon name="plus" size={30} color="white"/>}
+        onPress={() => this.setState({ isVisible: true })}
         type="solid"
         />
-      </Overlay>
-
-      {this.renderSelected()}
-      <Timeline
-        options={{
-          removeClippedSubviews: false
-        }}
-        style={styles.list}
-        data={this.state.data}
-        renderDetail={this.renderDetail}>
-        {/* // onEventPress={this.onEventPress}> */}
-      </Timeline>
-     
-      <Button
-      buttonStyle={{ position: 'absolute', bottom: 10, right: 10, zIndex: 10, borderRadius: '50%', paddingLeft: 10, paddingRight: 10, paddingTop: 8, paddingBottom: 8}}
-      icon={<Icon name="plus" size={30} color="white"/>}
-      onPress={() => this.setState({ isVisible: true })}
-      type="solid"
-      />
-
       </View>
     )
   }
@@ -229,10 +266,6 @@ const styles = StyleSheet.create({
 		paddingTop:0,
 		backgroundColor:'white'
   },
-  // list: {
-  //   flex: 1,
-  //   marginTop:20,
-  // },
   list: {
     flex: 1,
     marginTop:20,
