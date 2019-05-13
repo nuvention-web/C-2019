@@ -1,32 +1,25 @@
-import React, { Component, forwardRef } from 'react';
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  Image,
-  Text,
-  
-} from 'react-native';
+import React, { Component, forwardRef } from "react";
+import { StyleSheet, View, TouchableOpacity, Image, Text } from "react-native";
 
-import { ImagePicker , Permissions} from 'expo';
-import { Input, Button, Overlay} from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import Timeline from 'react-native-timeline-listview'
+import { ImagePicker, Permissions } from "expo";
+import { Input, Button, Overlay } from "react-native-elements";
+import Icon from "react-native-vector-icons/FontAwesome";
+import Timeline from "react-native-timeline-listview";
 import { db } from "../src/config";
 import * as firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
-import DatePicker from 'react-native-datepicker';
-import md5 from 'md5';
+import DatePicker from "react-native-datepicker";
+import md5 from "md5";
 
 export default class TimelineScreen extends Component {
   static navigationOptions = {
-    title: 'Timeline',
+    title: "Timeline"
   };
 
   constructor(props) {
     super(props);
-    const plantID = this.props.navigation.state.params['plantID'];
+    const plantID = this.props.navigation.state.params["plantID"];
     this.userEmail = firebase.auth().currentUser.email;
     this.ref = db
       .collection("Users")
@@ -34,115 +27,128 @@ export default class TimelineScreen extends Component {
       .collection("Plants")
       .doc(plantID)
       .collection("Timeline");
-    
+
     var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var dd = String(today.getDate()).padStart(2, "0");
+    var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
     var yyyy = today.getFullYear();
-    today = mm + '/' + dd + '/' + yyyy;
+    today = mm + "/" + dd + "/" + yyyy;
 
     this.state = {
       isVisible: false, //state of modal default false
       date: today,
-      title: '',
-      description: '',
+      title: "",
+      description: "",
       image: "nothing",
       data: [],
       isLoading: true,
-      downloadURL: '',
+      downloadURL: "",
       userEmail: this.userEmail,
       plantID: plantID
     };
 
-    this.renderDetail = this.renderDetail.bind(this)
+    this.renderDetail = this.renderDetail.bind(this);
   }
 
   componentDidMount() {
     this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
   }
 
-  onCollectionUpdate = async (querySnapshot) => {
+  onCollectionUpdate = async querySnapshot => {
     this.setState({
-      isLoading: true,
+      isLoading: true
     });
     var newData = [];
-    var test = ['a'];
-    await querySnapshot.forEach((doc) => {
+    var test = ["a"];
+    await querySnapshot.forEach(doc => {
       const { date, title, description } = doc.data();
-      var imageName = md5(this.state.userEmail + date + title + description + this.state.plantID);
-      var ref = firebase.storage().ref().child("images/" + imageName + ".jpg");
-      ref.getDownloadURL()
-      .then(function(url){
-        newData.push(
-          { time: date, title: title, description: description, imageUrl: url}
-        );
-      })
-      .catch( function(error){
-        newData.push(
-          { time: date, title: title, description: description, imageUrl: ""}
-        );
-      })
-      .finally( () => {
-        this.setState({
-          data: newData,
-          isLoading: false,
+      var imageName = md5(
+        this.state.userEmail + date + title + description + this.state.plantID
+      );
+      var ref = firebase
+        .storage()
+        .ref()
+        .child("images/" + imageName + ".jpg");
+      ref
+        .getDownloadURL()
+        .then(function(url) {
+          newData.push({
+            time: date,
+            title: title,
+            description: description,
+            imageUrl: url
+          });
         })
-      })
-    })
-  }
+        .catch(function(error) {
+          newData.push({
+            time: date,
+            title: title,
+            description: description,
+            imageUrl: ""
+          });
+        })
+        .finally(() => {
+          this.setState({
+            data: newData,
+            isLoading: false
+          });
+        });
+    });
+  };
 
   submitNewEntry = async () => {
     this.setState({
-      isLoading: true,
+      isLoading: true
     });
-    if(this.state.image != "nothing"){
+    if (this.state.image != "nothing") {
       this.uploadImage(this.state.image)
-      .then(() => {
-        this.ref.add({
+        .then(() => {
+          this.ref.add({
+            date: this.state.date,
+            title: this.state.title,
+            description: this.state.description
+          });
+        })
+        .then(() => {
+          this.setState({
+            isLoading: false,
+            isVisible: false
+          });
+        });
+    } else {
+      this.ref
+        .add({
           date: this.state.date,
           title: this.state.title,
-          description: this.state.description,
+          description: this.state.description
         })
-      })    
-      .then(() => {
-        this.setState({
-          isLoading: false,
-          isVisible: false
-        })
-      })
-    } else {
-      this.ref.add({
-        date: this.state.date,
-        title: this.state.title,
-        description: this.state.description,
-      })
-      .then(() => {
-        this.setState({
-          isLoading: false,
-          isVisible: false
-        })
-      })
+        .then(() => {
+          this.setState({
+            isLoading: false,
+            isVisible: false
+          });
+        });
     }
-  }
+  };
 
   _pickImage = async () => {
     const permissions = Permissions.CAMERA_ROLL;
     const { status } = await Permissions.askAsync(permissions);
     let result = null;
 
-    if(status === 'granted') {
+    if (status === "granted") {
       result = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true,
-        aspect: [4, 3],
+        aspect: [4, 3]
       });
     }
 
     if (!result.cancelled) {
-      this.setState({ image: result.uri});
+      this.setState({ image: result.uri });
     }
   };
 
-  uploadImage = async (uri) =>{
+  uploadImage = async uri => {
     const response = await fetch(uri);
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -150,56 +156,81 @@ export default class TimelineScreen extends Component {
         resolve(xhr.response);
       };
       xhr.onerror = function(e) {
-        reject(new TypeError('Network request failed'));
+        reject(new TypeError("Network request failed"));
       };
-      xhr.responseType = 'blob';
-      xhr.open('GET', uri, true);
+      xhr.responseType = "blob";
+      xhr.open("GET", uri, true);
       xhr.send(null);
     });
-  
-    var imageName = md5(this.state.userEmail + this.state.date + this.state.title + this.state.description + this.state.plantID);
-    var ref = firebase.storage().ref().child("images/" + imageName + ".jpg");
 
-    return ref.put(blob)
-  }
+    var imageName = md5(
+      this.state.userEmail +
+        this.state.date +
+        this.state.title +
+        this.state.description +
+        this.state.plantID
+    );
+    var ref = firebase
+      .storage()
+      .ref()
+      .child("images/" + imageName + ".jpg");
+
+    return ref.put(blob);
+  };
 
   renderDetail(rowData) {
-    let title = <Text style={[styles.title]}>{rowData.title}</Text>
-    var desc = null
-    if(rowData.description && rowData.imageUrl)
+    let title = <Text style={[styles.title]}>{rowData.title}</Text>;
+    var desc = null;
+    if (rowData.description && rowData.imageUrl)
       desc = (
-        <View style={styles.descriptionContainer}>   
-          <Image source={{uri: rowData.imageUrl}} style={styles.image}/>
+        <View style={styles.descriptionContainer}>
+          <Image source={{ uri: rowData.imageUrl }} style={styles.image} />
           <Text style={[styles.textDescription]}>{rowData.description}</Text>
         </View>
-      )
-    
+      );
+
     return (
-      <View style={{flex:1}}>
+      <View style={{ flex: 1 }}>
         {title}
         {desc}
       </View>
-    )
+    );
   }
 
-  onEventPress(data){
-    this.setState({selected: data})
+  onEventPress(data) {
+    this.setState({ selected: data });
   }
 
-  renderSelected(){
-    if(this.state.selected){
-      return <Text style={{marginTop:10}}>Selected event: {this.state.selected.title} at {this.state.selected.date}</Text>
+  renderSelected() {
+    if (this.state.selected) {
+      return (
+        <Text style={{ marginTop: 10 }}>
+          Selected event: {this.state.selected.title} at{" "}
+          {this.state.selected.date}
+        </Text>
+      );
     }
   }
 
-  render(){
-    return(
+  render() {
+    return (
       <View style={styles.container} minHeight="100%">
-        <Overlay isVisible={this.state.isVisible} height='auto' fullScreen={false}   onBackdropPress={() => this.setState({ isVisible: false })}>
-          <Input label='Title'  onChangeText={title=>this.setState({title})} />
-          <Input label='Description'  onChangeText={description=>this.setState({description})} />
+        <Overlay
+          isVisible={this.state.isVisible}
+          height="auto"
+          fullScreen={false}
+          onBackdropPress={() => this.setState({ isVisible: false })}
+        >
+          <Input
+            label="Title"
+            onChangeText={title => this.setState({ title })}
+          />
+          <Input
+            label="Description"
+            onChangeText={description => this.setState({ description })}
+          />
           <DatePicker
-            style={{width: 200}}
+            style={{ width: 200 }}
             date={this.state.date}
             mode="date"
             placeholder="select date"
@@ -210,7 +241,7 @@ export default class TimelineScreen extends Component {
             cancelBtnText="Cancel"
             customStyles={{
               dateIcon: {
-                position: 'absolute',
+                position: "absolute",
                 left: 8,
                 top: 4,
                 marginLeft: 0,
@@ -222,20 +253,18 @@ export default class TimelineScreen extends Component {
                 borderRadius: 2
               }
             }}
-            onDateChange={(date) => {this.setState({date: date})}}
+            onDateChange={date => {
+              this.setState({ date: date });
+            }}
           />
           <Button
             title="Upload Image"
             onPress={this._pickImage}
             style={{
-              marginVertical: 10,
+              marginVertical: 10
             }}
           />
-          <Button
-            title="OK"
-            onPress={this.submitNewEntry}
-            type="solid"
-          />
+          <Button title="OK" onPress={this.submitNewEntry} type="solid" />
         </Overlay>
 
         {this.renderSelected()}
@@ -245,18 +274,18 @@ export default class TimelineScreen extends Component {
           }}
           style={styles.list}
           data={this.state.data}
-          renderDetail={this.renderDetail}>
+          renderDetail={this.renderDetail}
+        >
           {/* // onEventPress={this.onEventPress}> */}
         </Timeline>
-      
-        <Button
-        buttonStyle={{ position: 'absolute', bottom: 10, right: 10, zIndex: 10, borderRadius: '50%', paddingLeft: 10, paddingRight: 10, paddingTop: 8, paddingBottom: 8}}
-        icon={<Icon name="plus" size={30} color="white"/>}
-        onPress={() => this.setState({ isVisible: true })}
-        type="solid"
-        />
+        <TouchableOpacity
+          onPress={() => this.setState({ isVisible: true })}
+          style={styles.button}
+        >
+          <Icon name="plus" size={30} color="white" />
+        </TouchableOpacity>
       </View>
-    )
+    );
   }
 }
 
@@ -264,28 +293,45 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-		paddingTop:0,
-		backgroundColor:'white'
+    paddingTop: 0,
+    backgroundColor: "white"
   },
   list: {
     flex: 1,
-    marginTop:20,
+    marginTop: 20
   },
-  title:{
-    fontSize:16,
-    fontWeight: 'bold'
+  title: {
+    fontSize: 16,
+    fontWeight: "bold"
   },
-  descriptionContainer:{
-    flexDirection: 'row',
+  descriptionContainer: {
+    flexDirection: "row",
     paddingRight: 50
   },
-  image:{
+  image: {
     width: 50,
     height: 50,
     borderRadius: 25
   },
   textDescription: {
     marginLeft: 10,
-    color: 'gray'
+    color: "gray"
+  },
+  button: {
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+    zIndex: 10,
+    borderRadius: 25,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 8,
+    paddingBottom: 8,
+    shadowColor: 'rgba(0,0,0, .4)', // IOS
+    shadowOffset: { height: 1, width: 1 }, // IOS
+    shadowOpacity: 1, // IOS
+    shadowRadius: 1, //IOS
+    backgroundColor: "#2f95dc",
+    elevation: 2, // Android
   }
 });

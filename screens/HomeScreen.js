@@ -1,5 +1,12 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, ScrollView, ActivityIndicator, TouchableOpacity, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity,
+  View
+} from "react-native";
 import { Input, Button, Overlay } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Card, CardTitle, CardImage } from "react-native-material-cards";
@@ -20,7 +27,7 @@ export default class HomeScreen extends Component {
       .collection("Users")
       .doc(this.userEmail)
       .collection("Plants");
-    
+
     this.state = {
       isVisible: false, //state of modal default false
       strain: "",
@@ -35,12 +42,16 @@ export default class HomeScreen extends Component {
     this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
   }
 
-  onCollectionUpdate = (querySnapshot) => {
+  onCollectionUpdate = querySnapshot => {
     const cards = [];
-    querySnapshot.forEach((doc) => {
+    querySnapshot.forEach(doc => {
       const { age, strain } = doc.data();
       cards.push(
-        <TouchableOpacity onPress={() => this.props.navigation.navigate("Timeline", { plantID: doc.id })}>
+        <TouchableOpacity
+          onPress={() =>
+            this.props.navigation.navigate("Timeline", { plantID: doc.id })
+          }
+        >
           <Card>
             <CardImage
               source={require("../src/static/plant1.jpg")}
@@ -53,33 +64,35 @@ export default class HomeScreen extends Component {
     });
     this.setState({
       cards,
-      isLoading: false,
-   });
-  }
+      isLoading: false
+    });
+  };
 
   submitNewPlant = () => {
     this.setState({
-      isLoading: true,
+      isLoading: true
     });
-    this.ref.doc(this.state.title).set({
-      strain: this.state.strain,
-      age: this.state.age
-    })
-    .then(
-      this.setState({
-        isLoading: false,
-        isVisible: false
+    this.ref
+      .doc(this.state.title)
+      .set({
+        strain: this.state.strain,
+        age: this.state.age
       })
-    )
-  }
+      .then(
+        this.setState({
+          isLoading: false,
+          isVisible: false
+        })
+      );
+  };
 
   render() {
-    if(this.state.isLoading){
-      return(
+    if (this.state.isLoading) {
+      return (
         <View style={styles.activity}>
-          <ActivityIndicator size="large" color="#0000ff"/>
+          <ActivityIndicator size="large" color="#0000ff" />
         </View>
-      )
+      );
     }
 
     return (
@@ -106,27 +119,16 @@ export default class HomeScreen extends Component {
             type="solid"
           />
         </Overlay>
-        <Button
-          buttonStyle={{
-            position: "absolute",
-            bottom: 10,
-            right: 10,
-            zIndex: 10,
-            borderRadius: "50%",
-            paddingLeft: 10,
-            paddingRight: 10,
-            paddingTop: 8,
-            paddingBottom: 8
-          }}
-          icon={<Icon name="plus" size={30} color="white" />}
+        <TouchableOpacity
           onPress={() => this.setState({ isVisible: true })}
-          type="solid"
-        />
+          style={styles.button}
+        >
+          <Icon name="plus" size={30} color="white" />
+        </TouchableOpacity>
       </View>
     );
   }
 }
-
 
 const styles = StyleSheet.create({
   submitButton: {
@@ -175,14 +177,21 @@ const styles = StyleSheet.create({
     alignSelf: "center"
   },
   button: {
-    height: 36,
-    backgroundColor: "#48BBEC",
-    borderColor: "#48BBEC",
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 10,
-    alignSelf: "stretch",
-    justifyContent: "center"
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+    zIndex: 10,
+    borderRadius: 25,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 8,
+    paddingBottom: 8,
+    shadowColor: 'rgba(0,0,0, .4)', // IOS
+    shadowOffset: { height: 1, width: 1 }, // IOS
+    shadowOpacity: 1, // IOS
+    shadowRadius: 1, //IOS
+    backgroundColor: "#2f95dc",
+    elevation: 2, // Android
   },
   TouchableOpacityStyle: {
     position: "absolute",
