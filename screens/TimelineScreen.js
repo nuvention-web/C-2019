@@ -195,7 +195,9 @@ export default class TimelineScreen extends Component {
   render(){
     return(
       <View style={styles.container} minHeight="100%">
-        <Overlay isVisible={this.state.isVisible} height='50%' fullScreen={false}   onBackdropPress={() => this.setState({ isVisible: false })}>
+        <Overlay isVisible={this.state.isVisible} height='auto' fullScreen={false}   onBackdropPress={() => this.setState({ isVisible: false })}>
+          <Input label='Title'  onChangeText={title=>this.setState({title})} />
+          <Input label='Description'  onChangeText={description=>this.setState({description})} />
           <DatePicker
             style={{width: 200}}
             date={this.state.date}
@@ -222,14 +224,13 @@ export default class TimelineScreen extends Component {
             }}
             onDateChange={(date) => {this.setState({date: date})}}
           />
-          <Input label='Title'  onChangeText={title=>this.setState({title})} />
-          <Input label='Description'  onChangeText={description=>this.setState({description})} />
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Button
-              title="Pick an image from camera roll"
-              onPress={this._pickImage}
-            />
-          </View>
+          <Button
+            title="Upload Image"
+            onPress={this._pickImage}
+            style={{
+              marginVertical: 10,
+            }}
+          />
           <Button
             title="OK"
             onPress={this.submitNewEntry}

@@ -87,7 +87,7 @@ export default class HomeScreen extends Component {
         <ScrollView>{this.state.cards}</ScrollView>
         <Overlay
           isVisible={this.state.isVisible}
-          height="30%"
+          height="auto"
           fullScreen={false}
           onBackdropPress={() => this.setState({ isVisible: false })}
         >
