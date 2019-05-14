@@ -16,7 +16,8 @@ const querystring = require("querystring");
 
 const CHATKIT_TOKEN_PROVIDER_ENDPOINT = 'https://us1.pusherplatform.io/services/chatkit_token_provider/v1/a97ef8a7-e054-49cf-abc5-cfd2f278baf3/token'; // 'PUSHER_TOKEN_ENDPOINT';
 const CHATKIT_INSTANCE_LOCATOR = 'v1:us1:a97ef8a7-e054-49cf-abc5-cfd2f278baf3'; //'PUSHER_INSTANCE_LOCATOR';
-const CHATKIT_CONSULTANT = 'growiydotcom@gmail.com';
+const growiy =  'growiydotcom@gmail.com';
+const CHATKIT_CONSULTANT = growiy;
 let CHATKIT_USER_NAME = ''; //'growiydotcom@gmail.com' ;
 
 
@@ -126,6 +127,11 @@ export default class ChatRoomList extends React.Component {
             <ActivityIndicator size="large" color="#0000ff" />
           </View>
         );
+      }
+
+      if (CHATKIT_USER_NAME != growiy && CHATKIT_USER_NAME != "" && this.state.roomIds.length == 1 ){
+        console.log("skipping chat room list screeen");
+        this.props.navigation.navigate("Consulting", { roomID: this.state.roomIds[0]["roomId"], userID: this.state.roomIds[0]["key"]})
       }
 
 
