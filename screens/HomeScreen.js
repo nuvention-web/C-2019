@@ -84,7 +84,7 @@ export default class HomeScreen extends Component {
       cards.push(
         <TouchableOpacity
         onPress={() =>
-          this.props.navigation.navigate("Timeline", { plantID: doc.id })
+          this.props.navigation.navigate("Timeline", { plantID: doc.id, userEmail: userEmail})
         }
         >
         <Card>

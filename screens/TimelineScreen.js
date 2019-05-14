@@ -13,6 +13,7 @@ import DatePicker from "react-native-datepicker";
 import md5 from "md5";
 
 function dateToInt(date) {
+  console.log("15 " + JSON.stringify(date));
   var dateVal = parseInt(date.substring(6, 10)) * 10000;
   dateVal += parseInt(date.substring(3, 5)) * 100;
   dateVal += parseInt(date.substring(0, 2));
@@ -20,6 +21,7 @@ function dateToInt(date) {
 }
 
 function sortEntries(data) {
+    console.log("24 " + JSON.stringify(data));
   return data.sort(function(a, b) {
     console.log(dateToInt(a["time"]));
     aVal = dateToInt(a["time"]);
@@ -40,7 +42,8 @@ export default class TimelineScreen extends Component {
   constructor(props) {
     super(props);
     const plantID = this.props.navigation.state.params["plantID"];
-    this.userEmail = firebase.auth().currentUser.email;
+    this.userEmail = this.props.navigation.state.params["userEmail"]; //firebase.auth().currentUser.email;
+    console.log("44 " + plantID + " " + this.userEmail)
     this.ref = db
       .collection("Users")
       .doc(this.userEmail)
