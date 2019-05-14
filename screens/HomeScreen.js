@@ -13,7 +13,11 @@ import { Card, CardTitle, CardImage } from "react-native-material-cards";
 import { db } from "../src/config";
 import * as firebase from "firebase/app";
 import "firebase/auth";
+import SearchBar from "react-native-dynamic-search-bar"
 import "firebase/database";
+const growiy = 'growiydotcom@gmail.com';
+var userEmail = "";
+
 
 export default class HomeScreen extends Component {
   static navigationOptions = {
@@ -22,11 +26,6 @@ export default class HomeScreen extends Component {
 
   constructor(props) {
     super(props);
-    this.userEmail = firebase.auth().currentUser.email;
-    this.ref = db
-      .collection("Users")
-      .doc(this.userEmail)
-      .collection("Plants");
 
     this.state = {
       isVisible: false, //state of modal default false
@@ -34,31 +33,67 @@ export default class HomeScreen extends Component {
       title: "",
       age: "",
       isLoading: true,
-      cards: []
+      cards: [],
     };
+
+    console.log(39)
+    userEmail = firebase.auth().currentUser.email;
+
+
+    this.ref = db
+    .collection("Users");
+
+
+
   }
 
   componentDidMount() {
-    this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
+    console.log(50);
+    console.log(userEmail);
+    let userRef = this.ref.doc(userEmail).collection("Plants");
+
+    this.unsubscribe = userRef.onSnapshot(this.onCollectionUpdate);
+  }
+
+
+  userLookup = (text) => {
+    this.setState({
+      isLoading: true
+    });
+    let oldUserEmail = userEmail;
+    userEmail = text;
+    try {
+      let userRef = this.ref.doc(userEmail).collection("Plants");
+      this.unsubscribe = userRef.onSnapshot(this.onCollectionUpdate);
+    }
+    catch(err){
+      userEmail = oldUserEmail;
+    }
+
+    this.setState({
+      isLoading: false
+    });
   }
 
   onCollectionUpdate = querySnapshot => {
+    console.log(76);
     const cards = [];
     querySnapshot.forEach(doc => {
+      console.log("81 " + JSON.stringify(doc.data()) )
       const { age, strain } = doc.data();
       cards.push(
         <TouchableOpacity
-          onPress={() =>
-            this.props.navigation.navigate("Timeline", { plantID: doc.id })
-          }
+        onPress={() =>
+          this.props.navigation.navigate("Timeline", { plantID: doc.id })
+        }
         >
-          <Card>
-            <CardImage
-              source={require("../src/static/plant1.jpg")}
-              title={"Day " + age}
-            />
-            <CardTitle title={doc.id} subtitle={strain} />
-          </Card>
+        <Card>
+        <CardImage
+        source={require("../src/static/plant1.jpg")}
+        title={"Day " + age}
+        />
+        <CardTitle title={doc.id} subtitle={strain} />
+        </Card>
         </TouchableOpacity>
       );
     });
@@ -69,64 +104,115 @@ export default class HomeScreen extends Component {
   };
 
   submitNewPlant = () => {
+    let userRef = this.ref.doc(userEmail).collection("Plants");
+
     this.setState({
       isLoading: true
     });
-    this.ref
-      .doc(this.state.title)
-      .set({
-        strain: this.state.strain,
-        age: this.state.age
+    userRef
+    .doc(this.state.title)
+    .set({
+      strain: this.state.strain,
+      age: this.state.age
+    })
+    .then(
+      this.setState({
+        isLoading: false,
+        isVisible: false
       })
-      .then(
-        this.setState({
-          isLoading: false,
-          isVisible: false
-        })
-      );
+    );
   };
 
   render() {
     if (this.state.isLoading) {
       return (
         <View style={styles.activity}>
-          <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#0000ff" />
         </View>
       );
     }
 
-    return (
-      <View minHeight="100%">
+
+    if (firebase.auth().currentUser.email==growiy){
+
+      return (
+        <View minHeight="100%">
+        <View style={{margin: 10}}>
+        <SearchBar
+        placeholder="Search for users here"
+        onPressCancel={() => {
+          console.log("cancel")
+        }}
+        onChangeText={text=> this.userLookup(text)}
+        />
+        </View>
         <ScrollView>{this.state.cards}</ScrollView>
         <Overlay
-          isVisible={this.state.isVisible}
-          height="auto"
-          fullScreen={false}
-          onBackdropPress={() => this.setState({ isVisible: false })}
+        isVisible={this.state.isVisible}
+        height="auto"
+        fullScreen={false}
+        onBackdropPress={() => this.setState({ isVisible: false })}
         >
-          <Input
-            label="Strain"
-            onChangeText={strain => this.setState({ strain })}
-          />
-          <Input
-            label="Title"
-            onChangeText={title => this.setState({ title })}
-          />
-          <Input label="Age" onChangeText={age => this.setState({ age })} />
-          <Button
-            title="OK"
-            onPress={() => this.submitNewPlant()}
-            type="solid"
-          />
+        <Input
+        label="Strain"
+        onChangeText={strain => this.setState({ strain })}
+        />
+        <Input
+        label="Title"
+        onChangeText={title => this.setState({ title })}
+        />
+        <Input label="Age" onChangeText={age => this.setState({ age })} />
+        <Button
+        title="OK"
+        onPress={() => this.submitNewPlant()}
+        type="solid"
+        />
         </Overlay>
         <TouchableOpacity
-          onPress={() => this.setState({ isVisible: true })}
-          style={styles.button}
+        onPress={() => this.setState({ isVisible: true })}
+        style={styles.button}
         >
-          <Icon name="plus" size={30} color="white" />
+        <Icon name="plus" size={30} color="white" />
         </TouchableOpacity>
+        </View>
+      );
+    }
+
+
+    return (
+
+      <View minHeight="100%">
+      <ScrollView>{this.state.cards}</ScrollView>
+      <Overlay
+      isVisible={this.state.isVisible}
+      height="auto"
+      fullScreen={false}
+      onBackdropPress={() => this.setState({ isVisible: false })}
+      >
+      <Input
+      label="Strain"
+      onChangeText={strain => this.setState({ strain })}
+      />
+      <Input
+      label="Title"
+      onChangeText={title => this.setState({ title })}
+      />
+      <Input label="Age" onChangeText={age => this.setState({ age })} />
+      <Button
+      title="OK"
+      onPress={() => this.submitNewPlant()}
+      type="solid"
+      />
+      </Overlay>
+      <TouchableOpacity
+      onPress={() => this.setState({ isVisible: true })}
+      style={styles.button}
+      >
+      <Icon name="plus" size={30} color="white" />
+      </TouchableOpacity>
       </View>
     );
+
   }
 }
 
