@@ -84,6 +84,7 @@ export default class TimelineScreen extends Component {
     var newData = [];
     await querySnapshot.forEach(doc => {
       const { date, title, description } = doc.data();
+      console.log(description);``
       var imageName = md5(
         this.state.userEmail + date + title + description + this.state.plantID
       );
@@ -203,13 +204,20 @@ export default class TimelineScreen extends Component {
   renderDetail(rowData) {
     let title = <Text style={[styles.title]}>{rowData.title}</Text>;
     var desc = null;
-    if (rowData.description && rowData.imageUrl)
+    if (rowData.description && rowData.imageUrl){
       desc = (
         <View style={styles.descriptionContainer}>
           <Image source={{ uri: rowData.imageUrl }} style={styles.image} />
           <Text style={[styles.textDescription]}>{rowData.description}</Text>
         </View>
       );
+    } else if(rowData.description){
+      desc = (
+        <View style={styles.descriptionContainer}>
+          <Text style={[styles.textDescription]}>{rowData.description}</Text>
+        </View>
+      );
+    }
 
     return (
       <View style={{ flex: 1 }}>
@@ -235,8 +243,14 @@ export default class TimelineScreen extends Component {
   }
 
   render() {
+    var message = null;
+    if(this.state.data.length == 0){
+      message = (<Text style={{ marginVertical: 10 }}>You have no timeline entries for this plant. Press the plus button to start tracking!</Text>);
+    }
+
     return (
       <View style={styles.container} minHeight="100%">
+        {message}
         <Overlay
           isVisible={this.state.isVisible}
           height="auto"
