@@ -30,7 +30,7 @@ export default class HomeScreen extends Component {
       isVisible: false, //state of modal default false
       strain: "",
       title: "",
-      age: "",
+      age: "0",
       isLoading: true,
       cards: []
     };
@@ -73,6 +73,7 @@ export default class HomeScreen extends Component {
     querySnapshot.forEach(doc => {
       console.log("81 " + JSON.stringify(doc.data()));
       const { age, strain } = doc.data();
+
       cards.push(
         <TouchableOpacity
           onPress={() =>
@@ -99,11 +100,31 @@ export default class HomeScreen extends Component {
   };
 
   submitNewPlant = () => {
+    console.log(102 + this.state.title + this.state.strain)
+
+    if (this.state.title == "" || this.state.strain == ""){
+      this.setState({
+        isLoading: false,
+        isVisible: false
+      });
+
+      //
+      // this.setState({    isVisible: false}, function () {
+      //           alert("Please fill out all form fields");
+      // });
+      //
+
+
+      return;
+    }
+    console.log(113)
+
     let userRef = this.ref.doc(userEmail).collection("Plants");
 
     this.setState({
       isLoading: true
     });
+
     userRef
       .doc(this.state.title)
       .set({
@@ -159,7 +180,7 @@ export default class HomeScreen extends Component {
               label="Title"
               onChangeText={title => this.setState({ title })}
             />
-            <Input label="Age" onChangeText={age => this.setState({ age })} />
+
             <Button
               title="OK"
               onPress={() => this.submitNewPlant()}
@@ -193,7 +214,7 @@ export default class HomeScreen extends Component {
             label="Title"
             onChangeText={title => this.setState({ title })}
           />
-          <Input label="Age" onChangeText={age => this.setState({ age })} />
+
           <Button
             title="OK"
             onPress={() => this.submitNewPlant()}

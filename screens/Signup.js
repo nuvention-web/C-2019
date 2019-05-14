@@ -113,10 +113,10 @@ export default class Signup extends Component {
         />
         </Item>
         <Button style = {{margin: 10}} block onPress={this.submitSignup}>
-        <Text>Signup</Text>
+        <Text>Sign up</Text>
         </Button>
         <Button style = {{margin: 10}} block onPress={this.onLoginClick}>
-        <Text>Have an account? Login</Text>
+        <Text>Have an account? Log in</Text>
         </Button>
         </Form>
 

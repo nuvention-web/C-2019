@@ -74,10 +74,10 @@ class LoginCompoenent extends Component {
                       />
                 </Item>
                 <Button style = {{margin: 10}} block onPress={this.submitLogin}>
-                    <Text>Login</Text>
+                    <Text>Log in</Text>
                 </Button>
                 <Button style = {{margin: 10}} block onPress={this.onSignupClick}>
-                    <Text>Need an account? Signup</Text>
+                    <Text>Need an account? Sign up</Text>
                 </Button>
             </Form>
 
