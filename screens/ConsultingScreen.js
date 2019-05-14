@@ -9,9 +9,10 @@ import { db } from '../src/config';
 
 const CHATKIT_TOKEN_PROVIDER_ENDPOINT = 'https://us1.pusherplatform.io/services/chatkit_token_provider/v1/a97ef8a7-e054-49cf-abc5-cfd2f278baf3/token'; // 'PUSHER_TOKEN_ENDPOINT';
 const CHATKIT_INSTANCE_LOCATOR = 'v1:us1:a97ef8a7-e054-49cf-abc5-cfd2f278baf3'; //'PUSHER_INSTANCE_LOCATOR';
-const CHATKIT_ROOM_ID = '20687595';
-const CHATKIT_CONSULTANT = '1234567';
-let CHATKIT_USER_NAME = '2948752' ;
+var CHATKIT_ROOM_ID = '';
+var growiy = 'growiydotcom@gmail.com';
+var CHATKIT_CONSULTANT = growiy;
+var CHATKIT_USER_NAME = '' ;
 
 
 export default class MyChat extends React.Component {
@@ -21,16 +22,18 @@ export default class MyChat extends React.Component {
     title: 'Consulting',
   };
 
+  constructor(props) {
+    super(props);
+    CHATKIT_ROOM_ID = this.props.navigation.state.params['roomID'];
+    this.state = {
+        messages: [],
+        oldMessages: [],
+        init: 0,
+        loadEarlier: true,
+        isLoadingEarlier: false,
+      };
 
-  state = {
-    messages: [],
-    oldMessages: [],
-    init: 0,
-    loadEarlier: true,
-    isLoadingEarlier: false,
-  };
-
-
+  }
 
 
   onLoadEarlier = () => {
@@ -59,30 +62,39 @@ export default class MyChat extends React.Component {
 
     CHATKIT_USER_NAME = firebase.auth().currentUser.email;
 
+    if (CHATKIT_USER_NAME == growiy){
+      CHATKIT_CONSULTANT = this.props.navigation.state.params['userID'];
+    }
+
     const defaultMessage = {
       _id: CHATKIT_USER_NAME,
       text: "Welcome to Growiy consulting, how can we help you?",
       createdAt:  new Date(),
       user: {
-        _id: CHATKIT_CONSULTANT,
+        _id: growiy,
         name: "React Native",
         avatar: require('../assets/images/growiy-logo-round.png')
       }
     };
 
-    this.setState(previousState => ({
-      messages: GiftedChat.append(previousState.messages,defaultMessage),
-    }));
+  //  if (CHATKIT_USER_NAME != 'growiydotcom@gmail.com'){
+      this.setState(previousState => ({
+        messages: GiftedChat.append(previousState.messages,defaultMessage),
+      }));
+//}
+
 
     const tokenProvider = new TokenProvider({
       url: CHATKIT_TOKEN_PROVIDER_ENDPOINT,
     });
+
 
     const chatManager = new ChatManager({
       instanceLocator: CHATKIT_INSTANCE_LOCATOR,
       userId: CHATKIT_USER_NAME,
       tokenProvider: tokenProvider,
     });
+
 
     chatManager
     .connect()
@@ -99,7 +111,6 @@ export default class MyChat extends React.Component {
       console.log(err);
     });
   }
-
   onReceive = data => {
     const { id, senderId, text, createdAt } = data;
     const incomingMessage = {
@@ -125,7 +136,6 @@ export default class MyChat extends React.Component {
     }
 
   };
-
   onSend = (messages = []) => {
     this.setState(previousState => ({
       init: 1,

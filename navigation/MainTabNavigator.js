@@ -30,8 +30,8 @@ HomeStack.navigationOptions = {
 
 
 const ConsultingStack = createStackNavigator({
-  //Consulting: ConsultingScreen,
   ChatRoomList: ChatRoomListScreen,
+  Consulting: ConsultingScreen,
 });
 
 
