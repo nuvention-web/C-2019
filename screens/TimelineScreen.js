@@ -12,6 +12,26 @@ import "firebase/database";
 import DatePicker from "react-native-datepicker";
 import md5 from "md5";
 
+function dateToInt(date) {
+  var dateVal = parseInt(date.substring(6, 10)) * 10000;
+  dateVal += parseInt(date.substring(3, 5)) * 100;
+  dateVal += parseInt(date.substring(0, 2));
+  return dateVal.toString();
+}
+
+function sortEntries(data) {
+  return data.sort(function(a, b) {
+    console.log(dateToInt(a["time"]));
+    aVal = dateToInt(a["time"]);
+    bVal = dateToInt(b["time"]);
+    if (aVal < bVal) {
+      return -1;
+    } else {
+      return 1;
+    }
+  });
+}
+
 export default class TimelineScreen extends Component {
   static navigationOptions = {
     title: "Timeline"
@@ -59,7 +79,6 @@ export default class TimelineScreen extends Component {
       isLoading: true
     });
     var newData = [];
-    var test = ["a"];
     await querySnapshot.forEach(doc => {
       const { date, title, description } = doc.data();
       var imageName = md5(
@@ -89,7 +108,7 @@ export default class TimelineScreen extends Component {
         })
         .finally(() => {
           this.setState({
-            data: newData,
+            data: sortEntries(newData),
             isLoading: false
           });
         });
@@ -234,7 +253,7 @@ export default class TimelineScreen extends Component {
             date={this.state.date}
             mode="date"
             placeholder="select date"
-            format="DD/MM/YYYY"
+            format="MM/DD/YYYY"
             minDate="01-01-2016"
             maxDate="01-01-2021"
             confirmBtnText="Confirm"
@@ -327,11 +346,11 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     paddingTop: 8,
     paddingBottom: 8,
-    shadowColor: 'rgba(0,0,0, .4)', // IOS
+    shadowColor: "rgba(0,0,0, .4)", // IOS
     shadowOffset: { height: 1, width: 1 }, // IOS
     shadowOpacity: 1, // IOS
     shadowRadius: 1, //IOS
     backgroundColor: "#2f95dc",
-    elevation: 2, // Android
+    elevation: 2 // Android
   }
 });
