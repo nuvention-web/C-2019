@@ -1,5 +1,5 @@
 import React, { Component, forwardRef } from "react";
-import { StyleSheet, View, TouchableOpacity, Image, Text } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Image, Text, TouchableHighlight, Modal , Dimensions} from "react-native";
 
 import { ImagePicker, Permissions } from "expo";
 import { Input, Button, Overlay } from "react-native-elements";
@@ -67,7 +67,9 @@ export default class TimelineScreen extends Component {
       isLoading: true,
       downloadURL: "",
       userEmail: this.userEmail,
-      plantID: plantID
+      plantID: plantID,
+      modalVisible: false,
+      modalImg: null,
     };
 
     this.renderDetail = this.renderDetail.bind(this);
@@ -227,8 +229,9 @@ export default class TimelineScreen extends Component {
     );
   }
 
-  onEventPress(data) {
-    this.setState({ selected: data });
+  onEventPress = data => {
+    this.setState({ modalVisible: true, modalImg: data.imageUrl});
+    console.log(data.imageUrl );
   }
 
   renderSelected() {
@@ -240,6 +243,10 @@ export default class TimelineScreen extends Component {
         </Text>
       );
     }
+  }
+
+  setModalVisible(visible) {
+    this.setState({ modalVisible: visible });
   }
 
   render() {
@@ -304,6 +311,7 @@ export default class TimelineScreen extends Component {
         </Overlay>
 
         {this.renderSelected()}
+
         <Timeline
           options={{
             removeClippedSubviews: false
@@ -311,9 +319,38 @@ export default class TimelineScreen extends Component {
           style={styles.list}
           data={this.state.data}
           renderDetail={this.renderDetail}
+          onEventPress={this.onEventPress }
         >
           {/* // onEventPress={this.onEventPress}> */}
         </Timeline>
+
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.state.modalVisible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+          }}>
+          <View style={{marginTop: 22}}>
+            <View style ={{flexDirection: 'column',
+justifyContent: 'center',
+alignItems: 'center'}}>
+            <Image
+                source={{uri: this.state.modalImg}}
+                style={{marginTop : 20, marginBottom: 20,  width: Dimensions.get('window').width, height: Dimensions.get('window').height * .8}}
+              />
+
+              <TouchableHighlight
+                onPress={() => {
+                  this.setModalVisible(!this.state.modalVisible);
+                }}>
+                <Text style={{textAlignVertical: "center",textAlign: "center", color: "blue", fontSize: 30}}>Hide Modal</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+        </Modal>
+        
+
         <TouchableOpacity
           onPress={() => this.setState({ isVisible: true })}
           style={styles.button}
