@@ -9,6 +9,9 @@ import TimelineScreen from '../screens/TimelineScreen';
 import ConsultingScreen from '../screens/ConsultingScreen';
 import ChatRoomListScreen from '../screens/ChatRoomListScreen';
 
+import SettingsScreen from '../screens/Settings';
+
+
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
   Timeline: TimelineScreen,
@@ -29,11 +32,29 @@ HomeStack.navigationOptions = {
 };
 
 
-const ConsultingStack = createStackNavigator({
-  ChatRoomList: ChatRoomListScreen,
-  Consulting: ConsultingScreen,
+const SettingsStack = createStackNavigator({
+    Settings: SettingsScreen,
 });
 
+SettingsStack.navigationOptions = {
+  tabBarLabel: 'Settings',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={
+        Platform.OS === 'ios'
+          ? `ios-settings`
+          : 'md-settings'
+      }
+    />
+  ),
+};
+
+
+const ConsultingStack = createStackNavigator({
+  Consulting: ConsultingScreen,
+  ChatRoomList: ChatRoomListScreen,
+});
 
 ConsultingStack.navigationOptions = {
   tabBarLabel: 'Consulting',
@@ -54,4 +75,5 @@ ConsultingStack.navigationOptions = {
 export default createBottomTabNavigator({
   HomeStack,
   ConsultingStack,
+  SettingsStack
 });
