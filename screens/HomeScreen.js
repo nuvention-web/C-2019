@@ -15,6 +15,8 @@ import * as firebase from "firebase/app";
 import "firebase/auth";
 import SearchBar from "react-native-dynamic-search-bar";
 import "firebase/database";
+import AutoSuggest from 'react-native-autosuggest'
+
 const growiy = "growiydotcom@gmail.com";
 var userEmail = "";
 
