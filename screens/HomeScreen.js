@@ -20,7 +20,7 @@ var userEmail = "";
 
 export default class HomeScreen extends Component {
   static navigationOptions = {
-    title: "Home"
+    title: "Your Plants"
   };
 
   constructor(props) {
