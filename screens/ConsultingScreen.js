@@ -16,8 +16,6 @@ var CHATKIT_USER_NAME = '' ;
 
 
 export default class MyChat extends React.Component {
-
-
   static navigationOptions = {
     title: 'Consulting',
   };
@@ -26,13 +24,12 @@ export default class MyChat extends React.Component {
     super(props);
     CHATKIT_ROOM_ID = this.props.navigation.state.params['roomID'];
     this.state = {
-        messages: [],
-        oldMessages: [],
-        init: 0,
-        loadEarlier: true,
-        isLoadingEarlier: false,
-      };
-
+      messages: [],
+      oldMessages: [],
+      init: 0,
+      loadEarlier: true,
+      isLoadingEarlier: false,
+    };
   }
 
 

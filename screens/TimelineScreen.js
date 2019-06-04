@@ -1,5 +1,5 @@
 import React, { Component, forwardRef } from "react";
-import { StyleSheet, View, TouchableOpacity, Image, Text } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Image, Text, ActivityIndicator } from "react-native";
 
 import { ImagePicker, Permissions } from "expo";
 import { Input, Button, Overlay } from "react-native-elements";
@@ -248,80 +248,88 @@ export default class TimelineScreen extends Component {
       message = (<Text style={{ marginVertical: 10 }}>You have no timeline entries for this plant. Press the plus button to start tracking!</Text>);
     }
 
-    return (
-      <View style={styles.container} minHeight="100%">
-        {message}
-        <Overlay
-          isVisible={this.state.isVisible}
-          height="auto"
-          fullScreen={false}
-          onBackdropPress={() => this.setState({ isVisible: false })}
-        >
-          <Input
-            label="Title"
-            onChangeText={title => this.setState({ title })}
-          />
-          <Input
-            label="Description"
-            onChangeText={description => this.setState({ description })}
-          />
-          <DatePicker
-            style={{ width: 200 }}
-            date={this.state.date}
-            mode="date"
-            placeholder="select date"
-            format="MM/DD/YYYY"
-            minDate="01-01-2016"
-            maxDate="01-01-2021"
-            confirmBtnText="Confirm"
-            cancelBtnText="Cancel"
-            customStyles={{
-              dateIcon: {
-                position: "absolute",
-                left: 8,
-                top: 4,
-                marginLeft: 0,
-                marginTop: 5
-              },
-              dateInput: {
-                marginTop: 5,
-                marginLeft: 44,
-                borderRadius: 2
-              }
-            }}
-            onDateChange={date => {
-              this.setState({ date: date });
-            }}
-          />
-          <Button
-            title="Upload Image"
-            onPress={this._pickImage}
-            style={{
-              marginVertical: 10
-            }}
-          />
-          <Button title="OK" onPress={this.submitNewEntry} type="solid" />
-        </Overlay>
+    if (this.state.isLoading) {
+      return (
+        <View style={styles.activity}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.container} minHeight="100%">
+          {message}
+          <Overlay
+            isVisible={this.state.isVisible}
+            height="auto"
+            fullScreen={false}
+            onBackdropPress={() => this.setState({ isVisible: false })}
+          >
+            <Input
+              label="Title"
+              onChangeText={title => this.setState({ title })}
+            />
+            <Input
+              label="Description"
+              onChangeText={description => this.setState({ description })}
+            />
+            <DatePicker
+              style={{ width: 200 }}
+              date={this.state.date}
+              mode="date"
+              placeholder="select date"
+              format="MM/DD/YYYY"
+              minDate="01-01-2016"
+              maxDate="01-01-2021"
+              confirmBtnText="Confirm"
+              cancelBtnText="Cancel"
+              customStyles={{
+                dateIcon: {
+                  position: "absolute",
+                  left: 8,
+                  top: 4,
+                  marginLeft: 0,
+                  marginTop: 5
+                },
+                dateInput: {
+                  marginTop: 5,
+                  marginLeft: 44,
+                  borderRadius: 2
+                }
+              }}
+              onDateChange={date => {
+                this.setState({ date: date });
+              }}
+            />
+            <Button
+              title="Upload Image"
+              onPress={this._pickImage}
+              style={{
+                marginVertical: 10
+              }}
+            />
+            <Button title="OK" onPress={this.submitNewEntry} type="solid" />
+          </Overlay>
 
-        {this.renderSelected()}
-        <Timeline
-          options={{
-            removeClippedSubviews: false
-          }}
-          style={styles.list}
-          data={this.state.data}
-          renderDetail={this.renderDetail}
-        >
-          {/* // onEventPress={this.onEventPress}> */}
-        </Timeline>
-        <TouchableOpacity
-          onPress={() => this.setState({ isVisible: true })}
-          style={styles.button}
-        >
-          <Icon name="plus" size={30} color="white" />
-        </TouchableOpacity>
-      </View>
-    );
+          {this.renderSelected()}
+          <Timeline
+            options={{
+              removeClippedSubviews: false
+            }}
+            style={styles.list}
+            data={this.state.data}
+            renderDetail={this.renderDetail}
+          >
+            {/* // onEventPress={this.onEventPress}> */}
+          </Timeline>
+          <TouchableOpacity
+            onPress={() => this.setState({ isVisible: true })}
+            style={styles.button}
+          >
+            <Icon name="plus" size={30} color="white" />
+          </TouchableOpacity>
+        </View>
+      );
+    }
   }
 }
 
