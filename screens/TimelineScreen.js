@@ -13,7 +13,6 @@ import DatePicker from "react-native-datepicker";
 import md5 from "md5";
 
 function dateToInt(date) {
-  console.log("15 " + JSON.stringify(date));
   var dateVal = parseInt(date.substring(6, 10)) * 10000;
   dateVal += parseInt(date.substring(3, 5)) * 100;
   dateVal += parseInt(date.substring(0, 2));
@@ -21,7 +20,6 @@ function dateToInt(date) {
 }
 
 function sortEntries(data) {
-    console.log("24 " + JSON.stringify(data));
   return data.sort(function(a, b) {
     console.log(dateToInt(a["time"]));
     aVal = dateToInt(a["time"]);
@@ -43,7 +41,6 @@ export default class TimelineScreen extends Component {
     super(props);
     const plantID = this.props.navigation.state.params["plantID"];
     this.userEmail = this.props.navigation.state.params["userEmail"]; //firebase.auth().currentUser.email;
-    console.log("44 " + plantID + " " + this.userEmail)
     this.ref = db
       .collection("Users")
       .doc(this.userEmail)
@@ -51,6 +48,7 @@ export default class TimelineScreen extends Component {
       .doc(plantID)
       .collection("Timeline");
 
+    console.log("53");
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, "0");
     var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
@@ -84,7 +82,6 @@ export default class TimelineScreen extends Component {
     var newData = [];
     await querySnapshot.forEach(doc => {
       const { date, title, description } = doc.data();
-      console.log(description);``
       var imageName = md5(
         this.state.userEmail + date + title + description + this.state.plantID
       );
@@ -116,6 +113,10 @@ export default class TimelineScreen extends Component {
             isLoading: false
           });
         });
+    });
+
+    this.setState({
+      isLoading: false
     });
   };
 
