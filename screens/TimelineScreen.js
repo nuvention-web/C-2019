@@ -1,5 +1,5 @@
 import React, { Component, forwardRef } from "react";
-import { StyleSheet, View, TouchableOpacity, Image, Text, ActivityIndicator } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Image, Text, TouchableHighlight, Modal , Dimensions, ActivityIndicator} from "react-native";
 
 import { ImagePicker, Permissions } from "expo";
 import { Input, Button, Overlay } from "react-native-elements";
@@ -65,7 +65,9 @@ export default class TimelineScreen extends Component {
       isLoading: true,
       downloadURL: "",
       userEmail: this.userEmail,
-      plantID: plantID
+      plantID: plantID,
+      modalVisible: false,
+      modalImg: null,
     };
 
     this.renderDetail = this.renderDetail.bind(this);
@@ -228,8 +230,9 @@ export default class TimelineScreen extends Component {
     );
   }
 
-  onEventPress(data) {
-    this.setState({ selected: data });
+  onEventPress = data => {
+    this.setState({ modalVisible: true, modalImg: data.imageUrl});
+    console.log(data.imageUrl );
   }
 
   renderSelected() {
@@ -241,6 +244,10 @@ export default class TimelineScreen extends Component {
         </Text>
       );
     }
+  }
+
+  setModalVisible(visible) {
+    this.setState({ modalVisible: visible });
   }
 
   render() {
@@ -255,82 +262,110 @@ export default class TimelineScreen extends Component {
           <ActivityIndicator size="large" color="#0000ff" />
         </View>
       );
-    } else {
-      return (
-        <View style={styles.container} minHeight="100%">
-          {message}
-          <Overlay
-            isVisible={this.state.isVisible}
-            height="auto"
-            fullScreen={false}
-            onBackdropPress={() => this.setState({ isVisible: false })}
-          >
-            <Input
-              label="Title"
-              onChangeText={title => this.setState({ title })}
-            />
-            <Input
-              label="Description"
-              onChangeText={description => this.setState({ description })}
-            />
-            <DatePicker
-              style={{ width: 200 }}
-              date={this.state.date}
-              mode="date"
-              placeholder="select date"
-              format="MM/DD/YYYY"
-              minDate="01-01-2016"
-              maxDate="01-01-2021"
-              confirmBtnText="Confirm"
-              cancelBtnText="Cancel"
-              customStyles={{
-                dateIcon: {
-                  position: "absolute",
-                  left: 8,
-                  top: 4,
-                  marginLeft: 0,
-                  marginTop: 5
-                },
-                dateInput: {
-                  marginTop: 5,
-                  marginLeft: 44,
-                  borderRadius: 2
-                }
-              }}
-              onDateChange={date => {
-                this.setState({ date: date });
-              }}
-            />
-            <Button
-              title="Upload Image"
-              onPress={this._pickImage}
-              style={{
-                marginVertical: 10
-              }}
-            />
-            <Button title="OK" onPress={this.submitNewEntry} type="solid" />
-          </Overlay>
-
-          {this.renderSelected()}
-          <Timeline
-            options={{
-              removeClippedSubviews: false
+    } else{ return (
+      <View style={styles.container} minHeight="100%">
+        {message}
+        <Overlay
+          isVisible={this.state.isVisible}
+          height="auto"
+          fullScreen={false}
+          onBackdropPress={() => this.setState({ isVisible: false })}
+        >
+          <Input
+            label="Title"
+            onChangeText={title => this.setState({ title })}
+          />
+          <Input
+            label="Description"
+            onChangeText={description => this.setState({ description })}
+          />
+          <DatePicker
+            style={{ width: 200 }}
+            date={this.state.date}
+            mode="date"
+            placeholder="select date"
+            format="MM/DD/YYYY"
+            minDate="01-01-2016"
+            maxDate="01-01-2021"
+            confirmBtnText="Confirm"
+            cancelBtnText="Cancel"
+            customStyles={{
+              dateIcon: {
+                position: "absolute",
+                left: 8,
+                top: 4,
+                marginLeft: 0,
+                marginTop: 5
+              },
+              dateInput: {
+                marginTop: 5,
+                marginLeft: 44,
+                borderRadius: 2
+              }
             }}
-            style={styles.list}
-            data={this.state.data}
-            renderDetail={this.renderDetail}
-          >
-            {/* // onEventPress={this.onEventPress}> */}
-          </Timeline>
-          <TouchableOpacity
-            onPress={() => this.setState({ isVisible: true })}
-            style={styles.button}
-          >
-            <Icon name="plus" size={30} color="white" />
-          </TouchableOpacity>
-        </View>
-      );
-    }
+            onDateChange={date => {
+              this.setState({ date: date });
+            }}
+          />
+          <Button
+            title="Upload Image"
+            onPress={this._pickImage}
+            style={{
+              marginVertical: 10
+            }}
+          />
+          <Button title="OK" onPress={this.submitNewEntry} type="solid" />
+        </Overlay>
+
+        {this.renderSelected()}
+
+        <Timeline
+          options={{
+            removeClippedSubviews: false
+          }}
+          style={styles.list}
+          data={this.state.data}
+          renderDetail={this.renderDetail}
+          onEventPress={this.onEventPress }
+        >
+          {/* // onEventPress={this.onEventPress}> */}
+        </Timeline>
+
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.state.modalVisible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+          }}>
+          <View style={{marginTop: 22}}>
+            <View style ={{flexDirection: 'column',
+justifyContent: 'center',
+alignItems: 'center'}}>
+            <Image
+                source={{uri: this.state.modalImg}}
+                style={{marginTop : 20, marginBottom: 20,  width: Dimensions.get('window').width, height: Dimensions.get('window').height * .8}}
+              />
+
+              <TouchableHighlight
+                onPress={() => {
+                  this.setModalVisible(!this.state.modalVisible);
+                }}>
+                <Text style={{textAlignVertical: "center",textAlign: "center", color: "blue", fontSize: 30}}>Hide Modal</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+        </Modal>
+        
+
+        <TouchableOpacity
+          onPress={() => this.setState({ isVisible: true })}
+          style={styles.button}
+        >
+          <Icon name="plus" size={30} color="white" />
+        </TouchableOpacity>
+      </View>
+    );}  
   }
 }
 
