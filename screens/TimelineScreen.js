@@ -68,6 +68,8 @@ export default class TimelineScreen extends Component {
       plantID: plantID,
       modalVisible: false,
       modalImg: null,
+      modalTitle: "",
+      modalDescription: "",
     };
 
     this.renderDetail = this.renderDetail.bind(this);
@@ -231,8 +233,13 @@ export default class TimelineScreen extends Component {
   }
 
   onEventPress = data => {
-    this.setState({ modalVisible: true, modalImg: data.imageUrl});
+    this.setState({ modalVisible: true, modalImg: data.imageUrl, modalDescription: data.description, modalTitle: data.title});
     console.log(data.imageUrl );
+    console.log(data.title );
+
+    console.log(data.description );
+
+
   }
 
   renderSelected() {
@@ -340,18 +347,27 @@ export default class TimelineScreen extends Component {
           }}>
           <View style={{marginTop: 22}}>
             <View style ={{flexDirection: 'column',
-justifyContent: 'center',
-alignItems: 'center'}}>
+              justifyContent: 'center',
+              alignItems: 'center'}}>
+
+             <Text style = {{fontSize: 40}}>
+              {this.state.modalTitle}
+            </Text>
+
             <Image
                 source={{uri: this.state.modalImg}}
-                style={{marginTop : 20, marginBottom: 20,  width: Dimensions.get('window').width, height: Dimensions.get('window').height * .8}}
+                style={{marginTop : 20, marginBottom: 20,  width: Dimensions.get('window').width, height: Dimensions.get('window').height * .5}}
               />
+
+            <Text style = {{fontSize: 30}}>
+              {this.state.modalDescription}
+            </Text>
 
               <TouchableHighlight
                 onPress={() => {
                   this.setModalVisible(!this.state.modalVisible);
                 }}>
-                <Text style={{textAlignVertical: "center",textAlign: "center", color: "blue", fontSize: 30}}>Hide Modal</Text>
+                <Text style={{textAlignVertical: "center",textAlign: "center", color: "blue", fontSize: 20}}>Hide Modal</Text>
               </TouchableHighlight>
             </View>
           </View>
