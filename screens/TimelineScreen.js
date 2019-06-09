@@ -1,5 +1,5 @@
 import React, { Component, forwardRef } from "react";
-import { StyleSheet, View, TouchableOpacity, Image, Text, TouchableHighlight, Modal , Dimensions} from "react-native";
+import { StyleSheet, View, TouchableOpacity, Image, Text, TouchableHighlight, Modal , Dimensions, ActivityIndicator} from "react-native";
 
 import { ImagePicker, Permissions } from "expo";
 import { Input, Button, Overlay } from "react-native-elements";
@@ -255,7 +255,13 @@ export default class TimelineScreen extends Component {
       message = (<Text style={{ marginVertical: 10 }}>You have no timeline entries for this plant. Press the plus button to start tracking!</Text>);
     }
 
-    return (
+    if (this.state.isLoading) {
+      return (
+        <View style={styles.activity}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      );
+    } else{ return (
       <View style={styles.container} minHeight="100%">
         {message}
         <Overlay
@@ -358,7 +364,7 @@ alignItems: 'center'}}>
           <Icon name="plus" size={30} color="white" />
         </TouchableOpacity>
       </View>
-    );
+    );}  
   }
 }
 
