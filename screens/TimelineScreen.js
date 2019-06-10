@@ -60,6 +60,8 @@ export default class TimelineScreen extends Component {
       date: today,
       title: "",
       description: "",
+      pH: "",
+      temperature: "",
       image: "nothing",
       data: [],
       isLoading: true,
@@ -125,6 +127,9 @@ export default class TimelineScreen extends Component {
   };
 
   submitNewEntry = async () => {
+    console.log(130,this.state.pH, this.state.temperature)
+    let fullDescription = (this.state.description + "\npH: " + this.state.pH + "\nTemperature: " + this.state.temperature)
+    console.log(132,fullDescription)
     this.setState({
       isLoading: true
     });
@@ -134,7 +139,7 @@ export default class TimelineScreen extends Component {
           this.ref.add({
             date: this.state.date,
             title: this.state.title,
-            description: this.state.description
+            description: fullDescription,
           });
         })
         .then(() => {
@@ -148,7 +153,7 @@ export default class TimelineScreen extends Component {
         .add({
           date: this.state.date,
           title: this.state.title,
-          description: this.state.description
+          description: fullDescription,
         })
         .then(() => {
           this.setState({
@@ -285,6 +290,14 @@ export default class TimelineScreen extends Component {
           <Input
             label="Description"
             onChangeText={description => this.setState({ description })}
+          />
+          <Input
+            label="pH"
+            onChangeText={pH => this.setState({ pH })}
+          />
+          <Input
+            label="Temperature"
+            onChangeText={temperature => this.setState({ temperature })}
           />
           <DatePicker
             style={{ width: 200 }}
