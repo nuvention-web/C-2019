@@ -48,6 +48,12 @@ class LoginCompoenent extends Component {
 
     }
 
+    forgotPassword = () => {
+      this.props.navigation.navigate('Password');
+    }
+
+    
+
 
   render() {
 
@@ -78,6 +84,9 @@ class LoginCompoenent extends Component {
                 </Button>
                 <Button style = {{margin: 10}} block onPress={this.onSignupClick}>
                     <Text>Need an account? Sign up</Text>
+                </Button>
+                <Button style = {{margin: 10}} block onPress={this.forgotPassword}>
+                    <Text>Forgot password?</Text>
                 </Button>
             </Form>
 

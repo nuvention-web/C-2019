@@ -9,6 +9,7 @@ import TimelineScreen from '../screens/TimelineScreen';
 import SignupScreen from '../screens/Signup';
 import ChatRoomList from '../screens/ChatRoomListScreen'
 import SettingsScreen from '../screens/Settings';
+import ForgotPasswordScreen from '../screens/forgotpassword';
 
 
 
@@ -22,7 +23,8 @@ export default createAppContainer(createSwitchNavigator({
   Consulting: ConsultingScreen,
   Timeline: TimelineScreen,
   ChatRoomList: ChatRoomList,
-  Settings: SettingsScreen
+  Settings: SettingsScreen,
+  Password: ForgotPasswordScreen,
 },
 {
   initialRouteName: 'Login',
