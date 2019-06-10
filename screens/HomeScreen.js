@@ -179,7 +179,7 @@ export default class HomeScreen extends Component {
               onChangeText={strain => this.setState({ strain })}
             />
             <Input
-              label="Title"
+              label="Name"
               onChangeText={title => this.setState({ title })}
             />
 
@@ -209,15 +209,18 @@ export default class HomeScreen extends Component {
           onBackdropPress={() => this.setState({ isVisible: false })}
         >
           <Input
+            style = {{margin: 5}}
             label="Strain"
             onChangeText={strain => this.setState({ strain })}
           />
           <Input
-            label="Title"
+            style = {{margin: 5}}
+            label="Name"
             onChangeText={title => this.setState({ title })}
           />
 
           <Button
+            style = {{margin: 5}}
             title="OK"
             onPress={() => this.submitNewPlant()}
             type="solid"
