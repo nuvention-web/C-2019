@@ -23,18 +23,20 @@ export default class Settings extends Component {
     this.state = { };
   };
 
-  logout = () => {
-    firebase.auth().signOut().then(function() {
-      this.props.navigation.navigate('Login');
-    }).catch(function(error) {
-      alert("Error logging out");
-    });
-  };
+  signOutUser = async () => {
+    try {
+        await firebase.auth().signOut();
+        this.props.navigation.navigate('Login');
+
+    } catch (e) {
+        console.log(e);
+    }
+}
 
   render() {
     return (
       <View>
-      <Button style = {{margin: 10}} block onPress={this.logout}>
+      <Button style = {{margin: 10}} block onPress={this.signOutUser}>
       <Text>Log out</Text>
       </Button>
       </View>
