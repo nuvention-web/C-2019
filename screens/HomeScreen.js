@@ -80,8 +80,35 @@ export default class HomeScreen extends Component {
 
   onCollectionUpdate = querySnapshot => {
     const cards = [];
+    imageVal = 0;
     querySnapshot.forEach(doc => {
       const { age, strain } = doc.data();
+      var image1;
+      if(doc.id == "Grow Tent"){
+        image1 = (
+          <CardImage
+            source={require("../src/static/growroom.jpg")}
+          />
+        )
+      } else if(imageVal == 0){
+        image1 = (
+          <CardImage
+            source={require("../src/static/plant1.jpg")}
+          />
+        )
+      } else if(imageVal == 1){
+        image1 = (
+          <CardImage
+            source={require("../src/static/plant2.jpg")}
+          />
+        )
+      } else if(imageVal == 2){
+        image1 = (
+          <CardImage
+            source={require("../src/static/plant3.jpg")}
+          />
+        )
+      }
       cards.push(
         <TouchableOpacity
           onPress={() =>
@@ -92,10 +119,7 @@ export default class HomeScreen extends Component {
           }
         >
           <Card>
-            <CardImage
-              source={require("../src/static/plant1.jpg")}
-              // title={"Day " + age}
-            />
+            {image1}
             <CardTitle title={doc.id} subtitle={strain} />
             <CardAction inColumn={false}>
               <CardButton
@@ -121,6 +145,8 @@ export default class HomeScreen extends Component {
           </Card>
         </TouchableOpacity>
       );
+      imageVal++;
+      imageVal = imageVal % 3;
     });
 
     this.setState({
