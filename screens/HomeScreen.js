@@ -62,9 +62,12 @@ export default class HomeScreen extends Component {
     let oldUserEmail = userEmail;
     userEmail = text;
     try {
+      console.log(65)
       let userRef = this.ref.doc(userEmail).collection("Plants");
       this.unsubscribe = userRef.onSnapshot(this.onCollectionUpdate);
+      console.log(68)
     } catch (err) {
+      console.log(70)
       userEmail = oldUserEmail;
     }
 
@@ -189,34 +192,41 @@ export default class HomeScreen extends Component {
               onChangeText={text => this.userLookup(text)}
             />
           </View>
-          <ScrollView>{this.state.cards}</ScrollView>
-          <Overlay
-            isVisible={this.state.isVisible}
-            height="auto"
-            fullScreen={false}
-            onBackdropPress={() => this.setState({ isVisible: false })}
-          >
-            <Input
-              label="Strain"
-              onChangeText={strain => this.setState({ strain })}
-            />
-            <Input
-              label="Name"
-              onChangeText={title => this.setState({ title })}
-            />
-
-            <Button
-              title="OK"
-              onPress={() => this.submitNewPlant()}
-              type="solid"
-            />
-          </Overlay>
-          <TouchableOpacity
-            onPress={() => this.setState({ isVisible: true })}
-            style={styles.button}
-          >
-            <Icon name="plus" size={30} color="white" />
-          </TouchableOpacity>
+          <ScrollView>
+          {message}
+          {this.state.cards}
+        </ScrollView>
+        <Overlay
+          isVisible={this.state.isVisible}
+          height="auto"
+          fullScreen={false}
+          onBackdropPress={() => this.setState({ isVisible: false })}
+        >
+          <Dropdown
+            label='Strain Type'
+            containerStyle = {{marginLeft: 10, marginRight: 10, marginBottom: 10, marginTop: 5}}
+            labelFontSize = '16'
+            labelTextStyle = {{ fontWeight: 'bold'}}
+            data={[{value: 'Sativa'},{value: 'Indica'},{value: 'Other'}]}
+            onChangeText={strain => this.setState({ strain })}
+          />
+          <Input
+            label="Name"
+            onChangeText={title => this.setState({ title })}
+          />
+          <Button
+            style={{ margin: 5 }}
+            title="OK"
+            onPress={() => this.submitNewPlant()}
+            type="solid"
+          />
+        </Overlay>
+        <TouchableOpacity
+          onPress={() => this.setState({ isVisible: true })}
+          style={styles.button}
+        >
+          <Icon name="plus" size={30} color="white" />
+        </TouchableOpacity>
         </View>
       );
     }

@@ -32,6 +32,8 @@ export default class MyChat extends React.Component {
     };
   }
 
+  
+
   onLoadEarlier = () => {
     this.setState(previousState => {
       return {
@@ -42,7 +44,7 @@ export default class MyChat extends React.Component {
     setTimeout(() => {
       this.setState(previousState => {
         return {
-          messages: GiftedChat.prepend(
+          messages: GiftedChat.append(
             previousState.messages,
             this.state.oldMessages
           ),
@@ -52,7 +54,34 @@ export default class MyChat extends React.Component {
         };
       });
     }, 1000); // simulating network
+    // this.setState(previousState => ({
+    //   oldMessages: this.sortEntries(this.state.oldMessages)
+    // }));
+    
+
   };
+
+  dateToInt = (date) => {
+    var dateVal = parseInt(date.substring(0, 4)) * 10000;
+    dateVal += parseInt(date.substring(5, 7)) * 100;
+    dateVal += parseInt(date.substring(8, 10));
+    return dateVal.toString();
+  };
+
+  sortEntries = (data) => {
+    return data.sort(function(a, b) {
+      console.log(this.dateToInt(a["time"]));
+      aVal = this.dateToInt(a["time"]);
+      bVal = this.dateToInt(b["time"]);
+      if (aVal > bVal) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+  }
+
+
 
   componentDidMount() {
     CHATKIT_USER_NAME = firebase.auth().currentUser.email;
