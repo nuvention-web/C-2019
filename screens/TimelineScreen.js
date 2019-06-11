@@ -1,5 +1,15 @@
 import React, { Component, forwardRef } from "react";
-import { StyleSheet, View, TouchableOpacity, Image, Text, TouchableHighlight, Modal , Dimensions, ActivityIndicator} from "react-native";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Image,
+  Text,
+  TouchableHighlight,
+  Modal,
+  Dimensions,
+  ActivityIndicator
+} from "react-native";
 
 import { ImagePicker, Permissions } from "expo";
 import { Input, Button, Overlay } from "react-native-elements";
@@ -71,7 +81,7 @@ export default class TimelineScreen extends Component {
       modalVisible: false,
       modalImg: null,
       modalTitle: "",
-      modalDescription: "",
+      modalDescription: ""
     };
 
     this.renderDetail = this.renderDetail.bind(this);
@@ -127,9 +137,14 @@ export default class TimelineScreen extends Component {
   };
 
   submitNewEntry = async () => {
-    console.log(130,this.state.pH, this.state.temperature)
-    let fullDescription = (this.state.description + "\npH: " + this.state.pH + "\nTemperature: " + this.state.temperature)
-    console.log(132,fullDescription)
+    console.log(130, this.state.pH, this.state.temperature);
+    let fullDescription =
+      this.state.description +
+      "\npH: " +
+      this.state.pH +
+      "\nTemperature: " +
+      this.state.temperature;
+    console.log(132, fullDescription);
     this.setState({
       isLoading: true
     });
@@ -139,7 +154,7 @@ export default class TimelineScreen extends Component {
           this.ref.add({
             date: this.state.date,
             title: this.state.title,
-            description: fullDescription,
+            description: fullDescription
           });
         })
         .then(() => {
@@ -150,17 +165,17 @@ export default class TimelineScreen extends Component {
         });
     } else {
       this.ref
-      .add({
-        date: this.state.date,
-        title: this.state.title,
-        description: fullDescription,
-      })
-      .then(() => {
-        this.setState({
-          isLoading: false,
-          isVisible: false
+        .add({
+          date: this.state.date,
+          title: this.state.title,
+          description: fullDescription
+        })
+        .then(() => {
+          this.setState({
+            isLoading: false,
+            isVisible: false
+          });
         });
-      });
     }
   };
 
@@ -214,7 +229,7 @@ export default class TimelineScreen extends Component {
   renderDetail(rowData) {
     let title = <Text style={[styles.title]}>{rowData.title}</Text>;
     var desc = null;
-    if (rowData.description && rowData.imageUrl){
+    if (rowData.description && rowData.imageUrl) {
       desc = (
         <View style={styles.descriptionContainer}>
           <Image source={{ uri: rowData.imageUrl }} style={styles.image} />
@@ -227,7 +242,7 @@ export default class TimelineScreen extends Component {
           {desc}
         </View>
       );
-    } else if(rowData.description){
+    } else if (rowData.description) {
       desc = (
         <View style={styles.descriptionContainer}>
           <Text style={[styles.textDescription]}>{rowData.description}</Text>
@@ -243,14 +258,17 @@ export default class TimelineScreen extends Component {
   }
 
   onEventPress = data => {
-    this.setState({ modalVisible: true, modalImg: data.imageUrl, modalDescription: data.description, modalTitle: data.title});
-    console.log(data.imageUrl );
-    console.log(data.title );
+    this.setState({
+      modalVisible: true,
+      modalImg: data.imageUrl,
+      modalDescription: data.description,
+      modalTitle: data.title
+    });
+    console.log(data.imageUrl);
+    console.log(data.title);
 
-    console.log(data.description );
-
-
-  }
+    console.log(data.description);
+  };
 
   renderSelected() {
     if (this.state.selected) {
@@ -269,8 +287,13 @@ export default class TimelineScreen extends Component {
 
   render() {
     var message = null;
-    if(this.state.data.length == 0){
-      message = (<Text style={{ marginVertical: 10 }}>You have no timeline entries for this plant. Press the plus button to start tracking!</Text>);
+    if (this.state.data.length == 0) {
+      message = (
+        <Text style={{ marginVertical: 10 }}>
+          You have no timeline entries for this plant. Press the plus button to
+          start tracking!
+        </Text>
+      );
     }
 
     if (this.state.isLoading) {
@@ -279,138 +302,153 @@ export default class TimelineScreen extends Component {
           <ActivityIndicator size="large" color="#0000ff" />
         </View>
       );
-    } else{ return (
-      <View style={styles.container} minHeight="100%">
-        {message}
-        <Overlay
-          isVisible={this.state.isVisible}
-          height="auto"
-          fullScreen={false}
-          onBackdropPress={() => this.setState({ isVisible: false })}
-        >
-          <Input
-            label="Title"
-            onChangeText={title => this.setState({ title })}
-          />
-          <Input
-            label="Description"
-            onChangeText={description => this.setState({ description })}
-          />
-          <Input
-            label="pH"
-            onChangeText={pH => this.setState({ pH })}
-          />
-          <Input
-            label="Temperature"
-            onChangeText={temperature => this.setState({ temperature })}
-          />
-          <DatePicker
-            style={{ width: 200 }}
-            date={this.state.date}
-            mode="date"
-            placeholder="select date"
-            format="MM/DD/YYYY"
-            minDate="01-01-2016"
-            maxDate="01-01-2021"
-            confirmBtnText="Confirm"
-            cancelBtnText="Cancel"
-            customStyles={{
-              dateIcon: {
-                position: "absolute",
-                left: 8,
-                top: 4,
-                marginLeft: 0,
-                marginTop: 5
-              },
-              dateInput: {
-                marginTop: 5,
-                marginLeft: 44,
-                borderRadius: 2
-              }
+    } else {
+      return (
+        <View style={styles.container} minHeight="100%">
+          {message}
+          <Overlay
+            isVisible={this.state.isVisible}
+            height="auto"
+            fullScreen={false}
+            onBackdropPress={() => this.setState({ isVisible: false })}
+          >
+            <Input
+              label="Title"
+              onChangeText={title => this.setState({ title })}
+            />
+            <Input
+              label="Description"
+              onChangeText={description => this.setState({ description })}
+            />
+            <Input label="pH" onChangeText={pH => this.setState({ pH })} />
+            <Input
+              label="Temperature"
+              onChangeText={temperature => this.setState({ temperature })}
+            />
+            <DatePicker
+              style={{ width: 200 }}
+              date={this.state.date}
+              mode="date"
+              placeholder="select date"
+              format="MM/DD/YYYY"
+              minDate="01-01-2016"
+              maxDate="01-01-2021"
+              confirmBtnText="Confirm"
+              cancelBtnText="Cancel"
+              customStyles={{
+                dateIcon: {
+                  position: "absolute",
+                  left: 8,
+                  top: 4,
+                  marginLeft: 0,
+                  marginTop: 5
+                },
+                dateInput: {
+                  marginTop: 5,
+                  marginLeft: 44,
+                  borderRadius: 2
+                }
+              }}
+              onDateChange={date => {
+                this.setState({ date: date });
+              }}
+            />
+            <Button
+              title="Upload Image"
+              onPress={this._pickImage}
+              style={{
+                marginVertical: 10
+              }}
+            />
+            <Button title="OK" onPress={this.submitNewEntry} type="solid" />
+          </Overlay>
+
+          {this.renderSelected()}
+
+          <Timeline
+            options={{
+              removeClippedSubviews: false,
+              style: { paddingTop: 5 }
             }}
-            onDateChange={date => {
-              this.setState({ date: date });
+            circleSize={20}
+            innerCircle={"dot"}
+            circleColor="rgb(45,156,219)"
+            lineColor="rgb(45,156,219)"
+            timeContainerStyle={{ minWidth: 52, marginTop: -5 }}
+            timeStyle={{
+              textAlign: "center",
+              backgroundColor: "#ff9797",
+              color: "white",
+              padding: 5,
+              borderRadius: 13
             }}
-          />
-          <Button
-            title="Upload Image"
-            onPress={this._pickImage}
-            style={{
-              marginVertical: 10
+            descriptionStyle={{ color: "gray" }}
+            style={styles.list}
+            data={this.state.data}
+            renderDetail={this.renderDetail}
+            onEventPress={this.onEventPress}
+          >
+            {/* // onEventPress={this.onEventPress}> */}
+          </Timeline>
+
+          <Modal
+            animationType="slide"
+            transparent={false}
+            visible={this.state.modalVisible}
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
             }}
-          />
-          <Button title="OK" onPress={this.submitNewEntry} type="solid" />
-        </Overlay>
+          >
+            <View style={{ marginTop: 50 }}>
+              <View
+                style={{
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center"
+                }}
+              >
+                <Text style={{ fontSize: 40 }}>{this.state.modalTitle}</Text>
 
-        {this.renderSelected()}
+                <Image
+                  source={{ uri: this.state.modalImg }}
+                  style={{
+                    marginTop: 20,
+                    marginBottom: 20,
+                    width: Dimensions.get("window").width,
+                    height: Dimensions.get("window").height * 0.5
+                  }}
+                />
 
-        <Timeline
-          options={{
-            removeClippedSubviews: false,
-            style:{paddingTop:5}
-          }}
-          circleSize={20}
-          innerCircle={'dot'}
-          circleColor='rgb(45,156,219)'
-          lineColor='rgb(45,156,219)'
-          timeContainerStyle={{minWidth:52, marginTop: -5}}
-          timeStyle={{textAlign: 'center', backgroundColor:'#ff9797', color:'white', padding:5, borderRadius:13}}
-          descriptionStyle={{color:'gray'}}
-          style={styles.list}
-          data={this.state.data}
-          renderDetail={this.renderDetail}
-          onEventPress={this.onEventPress }
-        >
-          {/* // onEventPress={this.onEventPress}> */}
-        </Timeline>
-
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={this.state.modalVisible}
-          onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
-          }}>
-          <View style={{marginTop: 50}}>
-            <View style ={{flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center'}}>
-
-             <Text style = {{fontSize: 40}}>
-              {this.state.modalTitle}
-            </Text>
-
-            <Image
-                source={{uri: this.state.modalImg}}
-                style={{marginTop : 20, marginBottom: 20,  width: Dimensions.get('window').width, height: Dimensions.get('window').height * .5}}
-              />
-
-            <Text style = {{fontSize: 30, padding: 5}}>
-              {this.state.modalDescription}
-            </Text>
-            <Button style = {{margin: 10}} 
-                    block 
-                    onPress={() => {this.setModalVisible(!this.state.modalVisible)}} 
-                    title='Back to Timeline'/>
-              {/* <TouchableHighlight
+                <Text style={{ fontSize: 30, padding: 5 }}>
+                  {this.state.modalDescription}
+                </Text>
+                <Button
+                  style={{ margin: 10 }}
+                  block
+                  onPress={() => {
+                    this.setModalVisible(!this.state.modalVisible);
+                  }}
+                  title="Back to Timeline"
+                />
+                {/* <TouchableHighlight
                 onPress={() => {
                   this.setModalVisible(!this.state.modalVisible);
                 }}>
                 <Text style={{textAlignVertical: "center",textAlign: "center", color: "blue", fontSize: 20}}>Hide Modal</Text>
               </TouchableHighlight> */}
+              </View>
             </View>
-          </View>
-        </Modal>
-        
+          </Modal>
 
-        <TouchableOpacity
-          onPress={() => this.setState({ isVisible: true })}
-          style={styles.button}
-        >
-          <Icon name="plus" size={30} color="white" />
-        </TouchableOpacity>
-      </View>
-    );}  
+          <TouchableOpacity
+            onPress={() => this.setState({ isVisible: true })}
+            style={styles.button}
+          >
+            <Icon name="plus" size={30} color="white" />
+          </TouchableOpacity>
+        </View>
+      );
+    }
   }
 }
 
