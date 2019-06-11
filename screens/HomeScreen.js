@@ -5,7 +5,8 @@ import {
   ScrollView,
   ActivityIndicator,
   TouchableOpacity,
-  View
+  View,
+  Picker
 } from "react-native";
 import { Input, Button, Overlay } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -16,6 +17,8 @@ import "firebase/auth";
 import SearchBar from "react-native-dynamic-search-bar";
 import "firebase/database";
 import AutoSuggest from 'react-native-autosuggest'
+import { Dropdown } from 'react-native-material-dropdown';
+import SearchInput, { createFilter } from 'react-native-search-filter';
 
 const growiy = "growiydotcom@gmail.com";
 var userEmail = "";
@@ -37,7 +40,6 @@ export default class HomeScreen extends Component {
       cards: []
     };
 
-    console.log(39);
     userEmail = firebase.auth().currentUser.email;
 
     this.ref = db.collection("Users");
@@ -110,16 +112,9 @@ export default class HomeScreen extends Component {
         isVisible: false
       });
 
-      //
-      // this.setState({    isVisible: false}, function () {
-      //           alert("Please fill out all form fields");
-      // });
-      //
-
 
       return;
     }
-    console.log(113)
 
     let userRef = this.ref.doc(userEmail).collection("Plants");
 
@@ -208,13 +203,15 @@ export default class HomeScreen extends Component {
           fullScreen={false}
           onBackdropPress={() => this.setState({ isVisible: false })}
         >
-          <Input
-            style = {{margin: 5}}
-            label="Strain"
+          <Dropdown
+            label='Strain Type'
+            containerStyle = {{marginLeft: 10, marginRight: 10, marginBottom: 10, marginTop: 5}}
+            labelFontSize = '16'
+            labelTextStyle = {{ fontWeight: 'bold'}}
+            data={[{value: 'Sativa'},{value: 'Indica'},{value: 'Other'}]}
             onChangeText={strain => this.setState({ strain })}
           />
           <Input
-            style = {{margin: 5}}
             label="Name"
             onChangeText={title => this.setState({ title })}
           />
@@ -254,8 +251,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     padding: 5,
-    width: "90%",
-    height: "30%",
+    width: "100%",
+    height: "50%",
     margin: 5
   },
   text: {
@@ -266,8 +263,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#00BCD4",
-    height: 300,
-    width: "90%",
+    height: '50%',
+    width: "100%",
     borderRadius: 10,
     borderWidth: 1,
     borderColor: "#fff"
