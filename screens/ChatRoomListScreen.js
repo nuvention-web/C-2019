@@ -39,7 +39,7 @@ export default class ChatRoomList extends React.Component {
 
     this.state = {
       roomIds: [],
-      isLoading: false
+      isLoading: true,
     };
 
     CHATKIT_USER_NAME = firebase.auth().currentUser.email;
@@ -49,9 +49,8 @@ export default class ChatRoomList extends React.Component {
 
   getRooms() {
     let that = this;
-    console.log(47);
+    that.setState({ isLoading: true });
     let newRoomIds = [];
-    console.log(49);
     axios
       .post(
         chatServer,
@@ -66,8 +65,6 @@ export default class ChatRoomList extends React.Component {
       )
       .then(function(response) {
         that.setState({ isLoading: true });
-        console.log(58);
-        console.log(JSON.stringify(that.state.roomIds));
         newRoomIds = that.state.roomIds;
         response = response["data"];
         //alert("61\n" + (JSON.stringify(response)));
@@ -78,21 +75,23 @@ export default class ChatRoomList extends React.Component {
         while (numRooms > 0) {
           let id = response[numRooms - 1]["id"];
           let user = response[numRooms - 1]["created_by_id"];
-          //console.log("63 " + id);
           newRoomIds.push({ key: user, roomId: id });
-          console.log(newRoomIds);
           numRooms = numRooms - 1;
         }
 
         that.setState({ roomIds: newRoomIds }, function() {
-          console.log(that.state.roomIds);
           that.setState({ isLoading: false });
         });
       })
 
+      
+
       .catch(err => {
-        //console.log("error 69: " + JSON.stringify(err));
+        console.log(JSON.stringify(err));
       });
+
+      that.setState({ isLoading: false });
+
   }
 
   componentDidMount() {
@@ -137,28 +136,28 @@ export default class ChatRoomList extends React.Component {
       });
     }
 
-    return (
-      <View minHeight="100%">
-        <FlatList
-          data={this.state.roomIds}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() =>
-                this.props.navigation.navigate("Consulting", {
-                  roomID: item.roomId,
-                  userID: item.key
-                })
-              }
-            >
-              <ListItem
-                topDivider="true"
-                bottomDivider="true"
-                title={item.key}
-              />
-            </TouchableOpacity>
-          )}
-        />
-      </View>
-    );
+      return (
+        <View minHeight="100%">
+          <FlatList
+            data={this.state.roomIds}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() =>
+                  this.props.navigation.navigate("Consulting", {
+                    roomID: item.roomId,
+                    userID: item.key
+                  })
+                }
+              >
+                <ListItem
+                  topDivider="true"
+                  bottomDivider="true"
+                  title={item.key}
+                />
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+      );
   }
 }
