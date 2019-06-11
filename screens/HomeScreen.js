@@ -79,12 +79,9 @@ export default class HomeScreen extends Component {
   };
 
   onCollectionUpdate = querySnapshot => {
-    console.log(76);
     const cards = [];
     querySnapshot.forEach(doc => {
-      console.log("81 " + JSON.stringify(doc.data()));
       const { age, strain } = doc.data();
-
       cards.push(
         <TouchableOpacity
           onPress={() =>
