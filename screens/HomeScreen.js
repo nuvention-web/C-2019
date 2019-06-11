@@ -90,19 +90,19 @@ export default class HomeScreen extends Component {
             source={require("../src/static/growroom.jpg")}
           />
         )
-      } else if(imageVal == 0){
+      } else if(doc.id == "Left Room"){
         image1 = (
           <CardImage
             source={require("../src/static/plant1.jpg")}
           />
         )
-      } else if(imageVal == 1){
+      } else if(imageVal == 0){
         image1 = (
           <CardImage
             source={require("../src/static/plant2.jpg")}
           />
         )
-      } else if(imageVal == 2){
+      } else if(imageVal == 1){
         image1 = (
           <CardImage
             source={require("../src/static/plant3.jpg")}
@@ -146,7 +146,7 @@ export default class HomeScreen extends Component {
         </TouchableOpacity>
       );
       imageVal++;
-      imageVal = imageVal % 3;
+      imageVal = imageVal % 2;
     });
 
     this.setState({
