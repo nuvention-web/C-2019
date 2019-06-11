@@ -1,99 +1,93 @@
-import React, { Component } from 'react';
-import { Text, TextInput } from 'react-native';
-import { Form, Item, Input, Label, Button } from 'native-base';
+import React, { Component } from "react";
+import { Text, TextInput } from "react-native";
+import { Form, Item, Input, Label, Button } from "native-base";
 import * as firebase from "firebase/app";
 import "firebase/auth";
-import styles from './styles';
+import styles from "./styles";
 
-const {
-    containerStyle,
-} = styles;
-
-
+const { containerStyle } = styles;
 
 class LoginCompoenent extends Component {
   static navigationOptions = {
-    title: 'Login',
+    title: "Login"
   };
 
   constructor(props) {
     super(props);
-    this.state = { email: '', password: '', error: '' };
+    this.state = { email: "", password: "", error: "" };
   }
 
   submitLogin = () => {
-    this.setState({ error: '', loading: true })
+    this.setState({ error: "", loading: true });
     const { email, password } = this.state;
-    firebase.auth().signInWithEmailAndPassword(email, password)
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
       .then(this.onLoginSuccess.bind(this))
       .catch(() => {
-        alert("Invalid credentials")
+        alert("Invalid credentials");
       });
+  };
+
+  onLoginSuccess() {
+    this.setState({
+      email: "",
+      password: "",
+      error: "",
+      loading: false
+    });
+    this.props.navigation.navigate("Main");
   }
 
+  onLoginFailure(errorMessage) {
+    this.setState({ error: errorMessage, loading: false });
+  }
 
-    onLoginSuccess() {
-      this.setState({
-        email: '', password: '', error: '', loading: false
-      });
-      this.props.navigation.navigate('Main');
-    }
+  onSignupClick = () => {
+    this.props.navigation.navigate("Signup");
+  };
 
-    onLoginFailure(errorMessage) {
-      this.setState({ error: errorMessage, loading: false });
-    }
-
-    onSignupClick = () => {
-      this.props.navigation.navigate('Signup');
-
-    }
-
-    forgotPassword = () => {
-      this.props.navigation.navigate('Password');
-    }
-
-    
-
+  forgotPassword = () => {
+    this.props.navigation.navigate("Password");
+  };
 
   render() {
-
     return (
-            <Form style = {containerStyle}>
-                <Text style = {{fontSize: 30, fontWeight: "bold", color: "green"}}>
-                    Growiy
-                </Text>
-                <Item last>
-                    <Input
-                      label="Email"
-                      placeholder="Email"
-                      value={this.state.email}
-                      secureTextEntry={false}
-                      onChangeText={email => this.setState({ email })}  />
-                </Item>
-                <Item last>
-                    <Input
-                      secureTextEntry={true}
-                      value={this.state.password}
-                      onChangeText={password => this.setState({ password })}
-                      placeholder="Password"
-                      label="Password"
-                      />
-                </Item>
-                <Button style = {{margin: 10}} block onPress={this.submitLogin}>
-                    <Text>Log in</Text>
-                </Button>
-                <Button style = {{margin: 10}} block onPress={this.onSignupClick}>
-                    <Text>Need an account? Sign up</Text>
-                </Button>
-                <Button style = {{margin: 10}} block onPress={this.forgotPassword}>
-                    <Text>Forgot password?</Text>
-                </Button>
-            </Form>
-
-
+      <Form style={containerStyle}>
+        <Text style={{ fontSize: 30, fontWeight: "bold", color: "green" }}>
+          Growiy
+        </Text>
+        <Item last>
+          <Input
+            label="Email"
+            placeholder="Email"
+            value={this.state.email}
+            secureTextEntry={false}
+            onChangeText={email => this.setState({ email })}
+          />
+        </Item>
+        <Item last>
+          <Input
+            secureTextEntry={true}
+            value={this.state.password}
+            onChangeText={password => this.setState({ password })}
+            placeholder="Password"
+            label="Password"
+          />
+        </Item>
+        <Button style={{ margin: 10 }} block onPress={this.submitLogin}>
+          <Text>Log in</Text>
+        </Button>
+        <Button style={{ margin: 10 }} block onPress={this.onSignupClick}>
+          <Text>Need an account? Sign up</Text>
+        </Button>
+        <Button style={{ margin: 10 }} block onPress={this.forgotPassword}>
+          <Text>Forgot password?</Text>
+        </Button>
+      </Form>
     );
   }
 }
 
 export { LoginCompoenent };
-export const Login = LoginCompoenent
+export const Login = LoginCompoenent;
