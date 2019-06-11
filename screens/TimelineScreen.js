@@ -150,17 +150,17 @@ export default class TimelineScreen extends Component {
         });
     } else {
       this.ref
-        .add({
-          date: this.state.date,
-          title: this.state.title,
-          description: fullDescription,
-        })
-        .then(() => {
-          this.setState({
-            isLoading: false,
-            isVisible: false
-          });
+      .add({
+        date: this.state.date,
+        title: this.state.title,
+        description: fullDescription,
+      })
+      .then(() => {
+        this.setState({
+          isLoading: false,
+          isVisible: false
         });
+      });
     }
   };
 
@@ -221,20 +221,25 @@ export default class TimelineScreen extends Component {
           <Text style={[styles.textDescription]}>{rowData.description}</Text>
         </View>
       );
+      return (
+        <View style={{ flex: 1 }}>
+          {title}
+          {desc}
+        </View>
+      );
     } else if(rowData.description){
       desc = (
         <View style={styles.descriptionContainer}>
           <Text style={[styles.textDescription]}>{rowData.description}</Text>
         </View>
       );
+      return (
+        <View style={{ flex: 1 }}>
+          {title}
+          {desc}
+        </View>
+      );
     }
-
-    return (
-      <View style={{ flex: 1 }}>
-        {title}
-        {desc}
-      </View>
-    );
   }
 
   onEventPress = data => {
@@ -341,8 +346,16 @@ export default class TimelineScreen extends Component {
 
         <Timeline
           options={{
-            removeClippedSubviews: false
+            removeClippedSubviews: false,
+            style:{paddingTop:5}
           }}
+          circleSize={20}
+          innerCircle={'dot'}
+          circleColor='rgb(45,156,219)'
+          lineColor='rgb(45,156,219)'
+          timeContainerStyle={{minWidth:52, marginTop: -5}}
+          timeStyle={{textAlign: 'center', backgroundColor:'#ff9797', color:'white', padding:5, borderRadius:13}}
+          descriptionStyle={{color:'gray'}}
           style={styles.list}
           data={this.state.data}
           renderDetail={this.renderDetail}
@@ -358,7 +371,7 @@ export default class TimelineScreen extends Component {
           onRequestClose={() => {
             Alert.alert('Modal has been closed.');
           }}>
-          <View style={{marginTop: 22}}>
+          <View style={{marginTop: 50}}>
             <View style ={{flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'center'}}>
@@ -372,16 +385,19 @@ export default class TimelineScreen extends Component {
                 style={{marginTop : 20, marginBottom: 20,  width: Dimensions.get('window').width, height: Dimensions.get('window').height * .5}}
               />
 
-            <Text style = {{fontSize: 30}}>
+            <Text style = {{fontSize: 30, padding: 5}}>
               {this.state.modalDescription}
             </Text>
-
-              <TouchableHighlight
+            <Button style = {{margin: 10}} 
+                    block 
+                    onPress={() => {this.setModalVisible(!this.state.modalVisible)}} 
+                    title='Back to Timeline'/>
+              {/* <TouchableHighlight
                 onPress={() => {
                   this.setModalVisible(!this.state.modalVisible);
                 }}>
                 <Text style={{textAlignVertical: "center",textAlign: "center", color: "blue", fontSize: 20}}>Hide Modal</Text>
-              </TouchableHighlight>
+              </TouchableHighlight> */}
             </View>
           </View>
         </Modal>
