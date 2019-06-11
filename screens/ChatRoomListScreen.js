@@ -39,7 +39,7 @@ export default class ChatRoomList extends React.Component {
 
     this.state = {
       roomIds: [],
-      isLoading: true,
+      isLoading: true
     };
 
     CHATKIT_USER_NAME = firebase.auth().currentUser.email;
@@ -84,14 +84,11 @@ export default class ChatRoomList extends React.Component {
         });
       })
 
-      
-
       .catch(err => {
         console.log(JSON.stringify(err));
       });
 
-      that.setState({ isLoading: false });
-
+    that.setState({ isLoading: false });
   }
 
   componentDidMount() {
@@ -136,28 +133,28 @@ export default class ChatRoomList extends React.Component {
       });
     }
 
-      return (
-        <View minHeight="100%">
-          <FlatList
-            data={this.state.roomIds}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                onPress={() =>
-                  this.props.navigation.navigate("Consulting", {
-                    roomID: item.roomId,
-                    userID: item.key
-                  })
-                }
-              >
-                <ListItem
-                  topDivider="true"
-                  bottomDivider="true"
-                  title={item.key}
-                />
-              </TouchableOpacity>
-            )}
-          />
-        </View>
-      );
+    return (
+      <View minHeight="100%">
+        <FlatList
+          data={this.state.roomIds}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() =>
+                this.props.navigation.navigate("Consulting", {
+                  roomID: item.roomId,
+                  userID: item.key
+                })
+              }
+            >
+              <ListItem
+                topDivider="true"
+                bottomDivider="true"
+                title={item.key}
+              />
+            </TouchableOpacity>
+          )}
+        />
+      </View>
+    );
   }
 }

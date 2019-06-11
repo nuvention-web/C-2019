@@ -6,19 +6,24 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   View,
-  Picker
+  Picker,
+  Alert
 } from "react-native";
 import { Input, Button, Overlay } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { Card, CardTitle, CardImage } from "react-native-material-cards";
+import {
+  Card,
+  CardTitle,
+  CardImage,
+  CardAction,
+  CardButton
+} from "react-native-material-cards";
 import { db } from "../src/config";
 import * as firebase from "firebase/app";
 import "firebase/auth";
 import SearchBar from "react-native-dynamic-search-bar";
 import "firebase/database";
-import AutoSuggest from 'react-native-autosuggest'
 import { Dropdown } from 'react-native-material-dropdown';
-import SearchInput, { createFilter } from 'react-native-search-filter';
 
 const growiy = "growiydotcom@gmail.com";
 var userEmail = "";
@@ -46,10 +51,7 @@ export default class HomeScreen extends Component {
   }
 
   componentDidMount() {
-    console.log(50);
-    console.log(userEmail);
     let userRef = this.ref.doc(userEmail).collection("Plants");
-
     this.unsubscribe = userRef.onSnapshot(this.onCollectionUpdate);
   }
 
@@ -69,6 +71,11 @@ export default class HomeScreen extends Component {
     this.setState({
       isLoading: false
     });
+  };
+
+  deletePlant = title => {
+    let userRef = this.ref.doc(userEmail).collection("Plants");
+    userRef.doc(title).delete();
   };
 
   onCollectionUpdate = querySnapshot => {
@@ -93,10 +100,32 @@ export default class HomeScreen extends Component {
               // title={"Day " + age}
             />
             <CardTitle title={doc.id} subtitle={strain} />
+            <CardAction inColumn={false}>
+              <CardButton
+                onPress={() => {
+                  let userRef = this.ref.doc(userEmail).collection("Plants");
+                  Alert.alert(
+                    "Are you sure you want to delete your plant?",
+                    "Your plant's data will be permanently lost.",
+                    [
+                      { text: "No", onPress: () => console.log("No pressed") },
+                      {
+                        text: "Yes",
+                        onPress: () => userRef.doc(doc.id).delete()
+                      }
+                    ],
+                    { cancelable: false }
+                  );
+                }}
+                title="Delete"
+                color="green"
+              />
+            </CardAction>
           </Card>
         </TouchableOpacity>
       );
     });
+
     this.setState({
       cards,
       isLoading: false
@@ -104,15 +133,11 @@ export default class HomeScreen extends Component {
   };
 
   submitNewPlant = () => {
-    console.log(102 + this.state.title + this.state.strain)
-
-    if (this.state.title == "" || this.state.strain == ""){
+    if (this.state.title == "" || this.state.strain == "") {
       this.setState({
         isLoading: false,
         isVisible: false
       });
-
-
       return;
     }
 
@@ -138,8 +163,13 @@ export default class HomeScreen extends Component {
 
   render() {
     var message = null;
-    if(this.state.cards.length == 0){
-      message = (<Text style={{ margin: 10 }}>You have no active timelines. Press the plus button to start tracking your plants!</Text>);
+    if (this.state.cards.length == 0) {
+      message = (
+        <Text style={{ margin: 10 }}>
+          You have no active timelines. Press the plus button to start tracking
+          your plants!
+        </Text>
+      );
     }
 
     if (this.state.isLoading) {
@@ -196,7 +226,10 @@ export default class HomeScreen extends Component {
 
     return (
       <View minHeight="100%">
-        <ScrollView>{message}{this.state.cards}</ScrollView>
+        <ScrollView>
+          {message}
+          {this.state.cards}
+        </ScrollView>
         <Overlay
           isVisible={this.state.isVisible}
           height="auto"
@@ -215,9 +248,8 @@ export default class HomeScreen extends Component {
             label="Name"
             onChangeText={title => this.setState({ title })}
           />
-
           <Button
-            style = {{margin: 5}}
+            style={{ margin: 5 }}
             title="OK"
             onPress={() => this.submitNewPlant()}
             type="solid"
