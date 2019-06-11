@@ -24,8 +24,8 @@ import md5 from "md5";
 
 function dateToInt(date) {
   var dateVal = parseInt(date.substring(6, 10)) * 10000;
-  dateVal += parseInt(date.substring(3, 5)) * 100;
-  dateVal += parseInt(date.substring(0, 2));
+  dateVal += parseInt(date.substring(3, 5));
+  dateVal += parseInt(date.substring(0, 2)) * 100;
   return dateVal.toString();
 }
 
@@ -266,7 +266,6 @@ export default class TimelineScreen extends Component {
     });
     console.log(data.imageUrl);
     console.log(data.title);
-
     console.log(data.description);
   };
 
@@ -279,6 +278,25 @@ export default class TimelineScreen extends Component {
         </Text>
       );
     }
+  }
+
+  renderModalImage() {
+    console.log("rendering modal");
+    if (this.state.modalImg) {
+      console.log("modal image not null");
+      return (
+        <Image
+          source={{ uri: this.state.modalImg }}
+          style={{
+            marginTop: 20,
+            marginBottom: 20,
+            width: Dimensions.get("window").width,
+            height: Dimensions.get("window").height * 0.5
+          }}
+        />
+      );
+    }
+    return null;
   }
 
   setModalVisible(visible) {
@@ -372,15 +390,15 @@ export default class TimelineScreen extends Component {
             }}
             circleSize={20}
             innerCircle={"dot"}
-            circleColor="rgb(45,156,219)"
-            lineColor="rgb(45,156,219)"
+            circleColor="green"
+            lineColor="green"
             timeContainerStyle={{ minWidth: 52, marginTop: -5 }}
             timeStyle={{
               textAlign: "center",
-              backgroundColor: "#ff9797",
+              backgroundColor: "green",
               color: "white",
               padding: 5,
-              borderRadius: 13
+              borderRadius: 5
             }}
             descriptionStyle={{ color: "gray" }}
             style={styles.list}
@@ -409,15 +427,7 @@ export default class TimelineScreen extends Component {
               >
                 <Text style={{ fontSize: 40 }}>{this.state.modalTitle}</Text>
 
-                <Image
-                  source={{ uri: this.state.modalImg }}
-                  style={{
-                    marginTop: 20,
-                    marginBottom: 20,
-                    width: Dimensions.get("window").width,
-                    height: Dimensions.get("window").height * 0.5
-                  }}
-                />
+                {this.renderModalImage()}
 
                 <Text style={{ fontSize: 30, padding: 5 }}>
                   {this.state.modalDescription}
@@ -430,12 +440,6 @@ export default class TimelineScreen extends Component {
                   }}
                   title="Back to Timeline"
                 />
-                {/* <TouchableHighlight
-                onPress={() => {
-                  this.setModalVisible(!this.state.modalVisible);
-                }}>
-                <Text style={{textAlignVertical: "center",textAlign: "center", color: "blue", fontSize: 20}}>Hide Modal</Text>
-              </TouchableHighlight> */}
               </View>
             </View>
           </Modal>
