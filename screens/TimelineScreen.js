@@ -137,18 +137,17 @@ export default class TimelineScreen extends Component {
   };
 
   submitNewEntry = async () => {
-    console.log(130, this.state.pH, this.state.temperature);
     let fullDescription =
       this.state.description +
       "\npH: " +
       this.state.pH +
       "\nTemperature: " +
       this.state.temperature;
-    console.log(132, fullDescription);
     this.setState({
       isLoading: true
     });
     if (this.state.image != "nothing") {
+      console.log("IMAGE SUPPLIED 151")
       this.uploadImage(this.state.image)
         .then(() => {
           this.ref.add({
@@ -180,23 +179,32 @@ export default class TimelineScreen extends Component {
   };
 
   _pickImage = async () => {
+    console.log(182)
     const permissions = Permissions.CAMERA_ROLL;
     const { status } = await Permissions.askAsync(permissions);
     let result = null;
-
+    console.log(186)
     if (status === "granted") {
+      console.log(188)
       result = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true,
         aspect: [4, 3]
       });
     }
-
+    console.log(194)
     if (!result.cancelled) {
       this.setState({ image: result.uri });
     }
   };
 
   uploadImage = async uri => {
+    let fullDescription =
+      this.state.description +
+      "\npH: " +
+      this.state.pH +
+      "\nTemperature: " +
+      this.state.temperature;
+    console.log(201);
     const response = await fetch(uri);
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -211,18 +219,20 @@ export default class TimelineScreen extends Component {
       xhr.send(null);
     });
 
+    console.log(216)
     var imageName = md5(
       this.state.userEmail +
         this.state.date +
         this.state.title +
-        this.state.description +
+        fullDescription +
         this.state.plantID
     );
+    console.log(224)
     var ref = firebase
       .storage()
       .ref()
       .child("images/" + imageName + ".jpg");
-
+    console.log(229);
     return ref.put(blob);
   };
 
